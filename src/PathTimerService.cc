@@ -6,7 +6,7 @@
 // Implementation:
 //
 // Original Author:  Jim Kowalkowski
-// $Id: PathTimerService.cc,v 1.1 2006/12/15 06:07:56 dlange Exp $
+// $Id: PathTimerService.cc,v 1.5 2007/03/27 00:57:46 bdahmes Exp $
 //
 
 #include "DQM/HLTEvF/interface/PathTimerService.h"
@@ -18,7 +18,7 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/Framework/interface/TriggerNamesService.h"
-#include "FWCore/Framework/interface/Handle.h"
+#include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "DataFormats/HLTReco/interface/HLTPerformanceInfo.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
@@ -71,26 +71,24 @@ namespace edm {
       for ( unsigned int i=0; i<trigPaths.size(); i++) {
 	_pathMapping[i]=trigPaths[i];
 	HLTPerformanceInfo::Path hltPath(trigPaths[i]);
-	_perfInfo->addPath(hltPath);
-
-	_moduleList[trigPaths[i]]="";
 	const std::vector<std::string> modules=tns->getTrigPathModules(trigPaths[i]);
 	for ( unsigned int j=0; j<modules.size(); j++) {
-	  if ( j!=0 )_moduleList[trigPaths[i]].append(" ");
-	  _moduleList[trigPaths[i]].append(modules[j]);
 	  _moduleTime[modules[j]]=0.;
-
 	  HLTPerformanceInfo::Modules::const_iterator iMod=_perfInfo->findModule(modules[j].c_str());
 	  if ( iMod == _perfInfo->endModules() ) {
 	    HLTPerformanceInfo::Module hltModule(modules[j].c_str(),0);
 	    _perfInfo->addModule(hltModule);
-	    _perfInfo->addModuleToPath(modules[j].c_str(),&hltPath);
-	  }
-	  else{
-	    
 	  }
 
+          //--- Check the module frequency in the path ---//
+          bool duplicateModule = false ; 
+          for (unsigned int k=0; k<j; k++) {
+              if (modules[k] == modules[j]) duplicateModule = true ; 
+          }
+          if (!duplicateModule)
+              _perfInfo->addModuleToPath(modules[j].c_str(),&hltPath);
 	}
+	_perfInfo->addPath(hltPath);
       }
       curr_job_ = getTime();
 
@@ -149,8 +147,15 @@ namespace edm {
       HLTPerformanceInfo::PathList::const_iterator iPath=_perfInfo->beginPaths();
       while ( iPath != _perfInfo->endPaths() ) {
 	HLTPerformanceInfo::Path *path=const_cast<HLTPerformanceInfo::Path*>(&(*iPath));
-	if ( iPath->name() == name) 
-	  path->setStatus(status);
+	if ( iPath->name() == name) { 
+            path->setStatus(status);
+            for (HLTPerformanceInfo::Path::const_iterator iMod=iPath->begin();
+                 iMod!=iPath->end(); iMod++) {
+                HLTPerformanceInfo::Module *module = const_cast<HLTPerformanceInfo::Module*>(&(*iMod));
+                module->setStatusByPath(path) ;
+            }
+        }
+
 	iPath++;
       }
     }
