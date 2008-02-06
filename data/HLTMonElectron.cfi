@@ -1,0 +1,18 @@
+       module hltMonElectron = HLTMonElectron{
+          untracked bool verbose = false
+          untracked bool MonitorDaemon = true
+          untracked bool DaqMonitorBEInterface = true
+	  untracked bool disableROOToutput = true
+          untracked string outputFile ="./L1TDQM.root"
+          VInputTag HLTCollectionLabels = {
+	        l1seedRelaxedSingle,   
+	        hltL1NonIsoSingleEMVeryHighEtL1MatchFilterRegional,
+	        hltL1NonIsoSinglePhotonEMVeryHighEtEtFilter	
+           }
+ 
+          vint32 theHLTOutputTypes = {   
+	         82,
+ 	         100,
+	         100
+           }
+      }

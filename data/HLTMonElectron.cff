@@ -1,0 +1,4 @@
+include "DQM/HLTEvF/data/HLTMonElectron.cfi"
+
+
+path hltMonElectronPath = {hltMonElectron}
