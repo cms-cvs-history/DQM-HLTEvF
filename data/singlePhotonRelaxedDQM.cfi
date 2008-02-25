@@ -1,0 +1,41 @@
+  module singlePhotonRelaxedDQM = HLTMonElectron  { 
+   untracked bool MonitorDaemon = true
+   untracked bool DaqMonitorBEInterface = true
+   untracked bool disableROOToutput = true
+   untracked string outputFile ="./L1TDQM.root"
+
+  uint32 reqNum = 1 
+  VPSet filters = {
+   { InputTag  HLTCollectionLabels = l1seedRelaxedSingle
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonL1MatchFilterRegional
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEtFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEcalIsolFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {l1IsolatedPhotonEcalIsol,l1NonIsolatedPhotonEcalIsol}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonHcalIsolFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {l1IsolatedPhotonHcalIsol,l1NonIsolatedPhotonHcalIsol}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonTrackIsolFilter
+     uint32    theHLTOutputTypes   = 91
+     VInputTag IsoCollections      = {l1IsoPhotonTrackIsol,l1NonIsoPhotonTrackIsol}
+     vdouble   PlotBounds          = {0,10}
+   }
+  }
+  untracked double PtMax = 200
+ }

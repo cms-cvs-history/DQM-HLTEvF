@@ -1,0 +1,47 @@
+  module highEtDQM = HLTMonElectron  { 
+  uint32 reqNum = 1 
+   untracked bool MonitorDaemon = true
+   untracked bool DaqMonitorBEInterface = true
+   untracked bool disableROOToutput = true
+   untracked string outputFile ="./L1TDQM.root"
+
+  VPSet filters = {
+   { InputTag  HLTCollectionLabels = l1seedRelaxedSingle
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtL1MatchFilterRegional
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEMHighEtEtFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtEcalIsolFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {l1IsolatedPhotonEcalIsol,l1NonIsolatedPhotonEcalIsol}
+     vdouble   PlotBounds          = {0,200}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHOEFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {l1NonIsolatedElectronHcalIsol,l1IsolatedElectronHcalIsol}
+     vdouble   PlotBounds          = {0,200}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHcalDBCFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {hltHcalDoubleCone,l1NonIsoEMHcalDoubleCone}
+     vdouble   PlotBounds          = {0,200}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtTrackIsolFilter
+     uint32    theHLTOutputTypes   = 91
+     VInputTag IsoCollections      = {l1IsoPhotonTrackIsol,l1NonIsoPhotonTrackIsol}
+     vdouble   PlotBounds          = {0,10}
+   }
+  }
+
+  untracked double PtMax = 1000
+ }

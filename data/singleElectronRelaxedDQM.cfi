@@ -1,0 +1,47 @@
+  module singleElectronRelaxedDQM = HLTMonElectron  { 
+   untracked bool MonitorDaemon = true
+   untracked bool DaqMonitorBEInterface = true
+   untracked bool disableROOToutput = true
+   untracked string outputFile ="./L1TDQM.root"
+
+  uint32 reqNum = 1 
+  VPSet filters = {
+   { InputTag  HLTCollectionLabels = l1seedRelaxedSingle
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronL1MatchFilterRegional
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronEtFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronHcalIsolFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {l1IsolatedElectronHcalIsol,l1NonIsolatedElectronHcalIsol}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronPixelMatchFilter
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronHOneOEMinusOneOPFilter
+     uint32    theHLTOutputTypes   = 92
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronTrackIsolFilter
+     uint32    theHLTOutputTypes   = 92
+     VInputTag IsoCollections     = {l1IsoElectronTrackIsol,l1NonIsoElectronTrackIsol}
+     vdouble   PlotBounds          = {0,10}
+   }
+  }
+
+  untracked double PtMax = 200
+ }
