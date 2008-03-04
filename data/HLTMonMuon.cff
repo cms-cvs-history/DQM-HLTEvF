@@ -1,0 +1,2 @@
+include "DQM/HLTEvF/data/HLTMonMuon.cfi"
+path hltMonMuonReco = { hltMonMuon }
