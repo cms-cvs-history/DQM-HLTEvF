@@ -1,0 +1,5 @@
+     module hltMonMuon = HLTMuonDQMSource {  
+        untracked int32 prescaleEvt = -1
+        untracked bool DaqMonitorBEInterface = true 
+     }
+
