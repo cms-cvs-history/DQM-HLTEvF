@@ -1,2 +1,2 @@
 include "DQM/HLTEvF/data/HLTMonMuon.cfi"
-path hltMonMuon = { hltMonMuonReco }
+path hltMonMuonReco = { hltMonMuon }

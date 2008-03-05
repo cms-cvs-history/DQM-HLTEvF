@@ -1,6 +1,5 @@
-module hltMuonMonitor = HLTMuonDQMSource {
-          untracked bool verbose = false
-          untracked bool MonitorDaemon = true
-          untracked bool DaqMonitorBEInterface = true
-}
-sequence hltMonMuonReco={hltMuonMonitor}
+     module hltMonMuon = HLTMuonDQMSource {  
+        untracked int32 prescaleEvt = -1
+        untracked bool DaqMonitorBEInterface = true 
+     }
+
