@@ -1,2 +1,0 @@
-include "DQM/HLTEvF/data/HLTMonElectron.cff"
-include "DQM/HLTEvF/data/HLTMonMuon.cff"
