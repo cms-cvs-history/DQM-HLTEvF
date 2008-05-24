@@ -1,0 +1,8 @@
+    module hltResults = FourVectorHLT {
+       untracked double ptMin = 0
+       untracked double ptMax = 100
+       untracked bool plotAll = false
+       InputTag triggerSummaryLabel = "hltTriggerSummaryAOD::HLT"
+       InputTag triggerResultLabel = "TriggerResults::HLT"
+       VPSet filters = {}
+    }
