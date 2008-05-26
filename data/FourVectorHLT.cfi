@@ -1,8 +1,11 @@
+# $Id$
     module hltResults = FourVectorHLT {
        untracked double ptMin = 0
        untracked double ptMax = 100
        untracked bool plotAll = false
-       InputTag triggerSummaryLabel = "hltTriggerSummaryAOD::HLT"
-       InputTag triggerResultLabel = "TriggerResults::HLT"
+       # this is I think MC
+       #InputTag triggerSummaryLabel = "hltTriggerSummaryAOD::HLT"
+       # this is data (CRUZET I or II best guess)
+       InputTag triggerSummaryLabel = "triggerSummaryProducerAOD::FU"
        VPSet filters = {}
     }
