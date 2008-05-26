@@ -1,0 +1,21 @@
+# HLTBJetDQMSource, configuration based on 2.0.X from ConfDB
+module hltBJetDQMSource = HLTBJetDQMSource {
+  InputTag lifetimeL2Jets        = hltMCJetCorJetIcone5
+  InputTag lifetimeL25TagInfo    = hltBLifetimeL25TagInfos
+  InputTag lifetimeL25JetTags    = hltBLifetimeL25BJetTags
+  InputTag lifetimeL3TagInfo     = hltBLifetimeL3TagInfos
+  InputTag lifetimeL3JetTags     = hltBLifetimeL3BJetTags
+  InputTag softmuonL2Jets        = hltMCJetCorJetIcone5
+  InputTag softmuonL25TagInfo    = hltBSoftmuonL25TagInfos
+  InputTag softmuonL25JetTags    = hltBSoftmuonL25BJetTags
+  InputTag softmuonL3TagInfo     = hltBSoftmuonL3TagInfos
+  InputTag softmuonL3JetTags     = hltBSoftmuonL3BJetTags
+  InputTag performanceL2Jets     = hltMCJetCorJetIcone5
+  InputTag performanceL25TagInfo = hltBSoftmuonL25TagInfos
+  InputTag performanceL25JetTags = hltBSoftmuonL25BJetTags
+  InputTag performanceL3TagInfo  = hltBSoftmuonL3TagInfos
+  InputTag performanceL3JetTags  = hltBSoftmuonL3BJetTagsByDR
+  untracked string monitorName   = "HLT/HLTMonBJet"
+  untracked string outputFile    = "HLTBJetDQM.root"
+  untracked bool   storeROOT     = false
+}
