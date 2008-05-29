@@ -1,0 +1,23 @@
+# $Id: FourVectorHLT.cfi,v 1.2 2008/05/26 07:59:36 wittich Exp $
+    module hltResults = HLTJetMETDQMSource {
+       untracked double ptMin = 0
+       untracked double ptMax = 100
+       untracked bool plotAll = false
+       # this is I think MC
+       #InputTag triggerSummaryLabel = "hltTriggerSummaryAOD::HLT"
+       # this is data (CRUZET I or II best guess)
+       InputTag triggerSummaryLabel = "triggerSummaryProducerAOD::FU"
+
+       VPSet filters = { }
+#       VPSet filters = {
+#         {
+#	   string name = "hlt1jet30"
+#           uint32 type = 1
+#           untracked double ptMin = 0
+#           untracked double ptMax = 100
+#         }
+#       }
+
+    }
+
+
