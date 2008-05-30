@@ -17,7 +17,7 @@ module hltTauMonitor = HLTTauDQMSource {
 	PSet MonitorSetup = 
 	{
     		untracked string   monitorName             = "DoubleTau"
-		untracked int32    NTriggeredTaus          = 2
+		untracked uint32    NTriggeredTaus          = 2
 		InputTag           TriggerEventObject      = hltTriggerSummaryRAW
 		untracked string   L1SeedFilter            = "hltDoubleTauL1SeedFilter"
 		untracked string   L2EcalIsolFilter        = "hltFilterDoubleTauEcalIsolation"
