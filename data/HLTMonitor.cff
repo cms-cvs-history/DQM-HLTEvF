@@ -1,2 +1,4 @@
-include "DQM/HLTEvF/data/HLTMonElectron.cff"
-include "DQM/HLTEvF/data/HLTMonMuon.cff"
+//include "DQM/HLTEvF/data/HLTMonElectron.cff"
+//include "DQM/HLTEvF/data/HLTMonMuon.cff"
+include "DQM/HLTEvF/data/FourVectorHLT.cff"
+include "DQM/HLTEvF/data/HLTEventInfoClient.cff"
