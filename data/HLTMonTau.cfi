@@ -16,18 +16,18 @@ module hltTauMonitor = HLTTauDQMSource {
 
 	PSet MonitorSetup = 
 	{
-    		untracked string   monitorName             = "DoubleTau"
-		untracked uint32    NTriggeredTaus          = 2
-		InputTag           TriggerEventObject      = hltTriggerSummaryRAW
-		untracked string   L1SeedFilter            = "hltDoubleTauL1SeedFilter"
-		untracked string   L2EcalIsolFilter        = "hltFilterDoubleTauEcalIsolation"
-	        untracked string   L25PixelIsolFilter      = "hltFilterL25PixelTau"
-	        untracked string   L3SiliconIsolFilter     = ""
-		untracked vstring   refFilters            = {"hltL1IsoDoubleElectronTrackIsolFilter"}
-		untracked vstring   refFilterDescriptions = {"DoubleElectron"}
-		untracked vint32    refFilterIDs          = {92}
-		untracked vdouble   refObjectPtCut        = {20.}
+    		untracked string     monitorName             = "DoubleTau"
+		untracked uint32     NTriggeredTaus          = 2
+		untracked InputTag   L1Seed                = hltL2DoubleTauJets
+		untracked InputTag   L2EcalIsolJets        = hltL2DoubleTauIsolationSelector:Isolated
+	        untracked InputTag   L25PixelIsolJets      = hltIsolatedL25PixelTau
+	        untracked InputTag   L3SiliconIsolJets     = ""
+		untracked VInputTag  refFilters            = {hltL2DoubleTauJets}
+		untracked vstring   refFilterDescriptions = {"preL2Tau"}
+		untracked vint32    refFilterIDs          = {94}
+		untracked vdouble   refObjectPtCut        = {15.}
 	}
+
 
 	PSet L2Monitoring = 
 	{
@@ -43,6 +43,14 @@ module hltTauMonitor = HLTTauDQMSource {
 		untracked InputTag L25IsolatedTauTagInfo =hltConeIsolationL25PixelTauIsolated
 		untracked double L25LeadingTrackCone     =0.3
 		untracked double L25MinLeadTrackPt       =1.
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = false
+		untracked InputTag L3IsolatedTauTagInfo =DUMMY
+		untracked double L25LeadingTrackCone     =0
+		untracked double L25MinLeadTrackPt       =0.
 	}
 
 
