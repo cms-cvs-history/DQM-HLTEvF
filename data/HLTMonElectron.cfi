@@ -1,18 +1,46 @@
-       module hltMonElectron = HLTMonElectron{
+       module hltMonE = HLTMon{
           untracked bool verbose = false
           untracked bool MonitorDaemon = true
           untracked bool DaqMonitorBEInterface = true
 	  untracked bool disableROOToutput = true
           untracked string outputFile ="./L1TDQM.root"
-          VInputTag HLTCollectionLabels = {
-	        l1seedRelaxedSingle,   
-	        hltL1NonIsoSingleEMVeryHighEtL1MatchFilterRegional,
-	        hltL1NonIsoSinglePhotonEMVeryHighEtEtFilter	
-           }
- 
-          vint32 theHLTOutputTypes = {   
-	         82,
- 	         100,
-	         100
-           }
+	  uint32 reqNum = 1
+	VPSet filters = {
+        { InputTag  HLTCollectionLabels = hltL1seedRelaxedSingleEt8::HLT
+          uint32    theHLTOutputTypes   = 83
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+        { InputTag  HLTCollectionLabels =  hltL1NonIsoHLTNonIsoSingleElectronLWEt12L1MatchFilterRegional::HLT
+          uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },                               
+        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12EtFilter::HLT
+          uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12HcalIsolFilter::HLT
+          uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {hltL1NonIsolatedElectronHcalIsol}
+          vdouble   PlotBounds          = {0,10}
+        },
+        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12PixelMatchFilter::HLT
+          uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12HOneOEMinusOneOPFilter::HLT
+          uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12TrackIsolFilter::HLT
+          uint32    theHLTOutputTypes   = 92
+          VInputTag IsoCollections      = {hltL1NonIsoLargeWindowElectronTrackIsol}
+          vdouble   PlotBounds          = {0,10}
+        }
       }
+}
+
