@@ -6,39 +6,39 @@
    untracked string outputFile ="./L1TDQM.root"
 
   VPSet filters = {
-   { InputTag  HLTCollectionLabels = l1seedRelaxedSingle
+   { InputTag  HLTCollectionLabels = hltL1seedRelaxedSingleEgamma::HLT
      uint32    theHLTOutputTypes   = 82
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtL1MatchFilterRegional
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtL1MatchFilterRegional::HLT
      uint32    theHLTOutputTypes   = 100
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEMHighEtEtFilter
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEMHighEtEtFilter::HLT
      uint32    theHLTOutputTypes   = 100
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtEcalIsolFilter
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtEcalIsolFilter::HLT
      uint32    theHLTOutputTypes   = 100
-     VInputTag IsoCollections      = {l1IsolatedPhotonEcalIsol,l1NonIsolatedPhotonEcalIsol}
+     VInputTag IsoCollections      = {hltL1IsolatedPhotonEcalIsol::HLT,hltL1NonIsolatedPhotonEcalIsol::HLT}
      vdouble   PlotBounds          = {0,200}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHOEFilter
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHOEFilter::HLT
      uint32    theHLTOutputTypes   = 100
-     VInputTag IsoCollections      = {l1NonIsolatedElectronHcalIsol,l1IsolatedElectronHcalIsol}
+     VInputTag IsoCollections      = {hltL1NonIsolatedElectronHcalIsol::HLT,hltL1IsolatedElectronHcalIsol::HLT}
      vdouble   PlotBounds          = {0,200}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHcalDBCFilter
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHcalDBCFilter::HLT
      uint32    theHLTOutputTypes   = 100
-     VInputTag IsoCollections      = {hltHcalDoubleCone,l1NonIsoEMHcalDoubleCone}
+     VInputTag IsoCollections      = {hltHcalDoubleCone::HLT,hltL1NonIsoEMHcalDoubleCone::HLT}
      vdouble   PlotBounds          = {0,200}
    },
-   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtTrackIsolFilter
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtTrackIsolFilter::HLT
      uint32    theHLTOutputTypes   = 91
-     VInputTag IsoCollections      = {l1IsoPhotonTrackIsol,l1NonIsoPhotonTrackIsol}
+     VInputTag IsoCollections      = {hltL1IsoPhotonTrackIsol::HLT,hltL1NonIsoPhotonTrackIsol::HLT}
      vdouble   PlotBounds          = {0,10}
    }
   }

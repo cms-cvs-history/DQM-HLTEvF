@@ -5,17 +5,17 @@ module veryHighEtDQM =  HLTMonElectron  {
    untracked string outputFile ="./L1TDQM.root"
   uint32 reqNum = 1 
   VPSet filters = {
-   { InputTag HLTCollectionLabels  = l1seedRelaxedSingle
+   { InputTag HLTCollectionLabels  = hltL1seedRelaxedSingleEgamma::HLT
      uint32   theHLTOutputTypes    = 82
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
    },
-   { InputTag HLTCollectionLabels  = hltL1NonIsoSingleEMVeryHighEtL1MatchFilterRegional
+   { InputTag HLTCollectionLabels  = hltL1NonIsoSingleEMVeryHighEtL1MatchFilterRegional::HLT
      uint32   theHLTOutputTypes    = 100
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
    },
-   { InputTag HLTCollectionLabels  = hltL1NonIsoSinglePhotonEMVeryHighEtEtFilter
+   { InputTag HLTCollectionLabels  = hltL1NonIsoSinglePhotonEMVeryHighEtEtFilter::HLT
      uint32   theHLTOutputTypes    = 100
      VInputTag IsoCollections      = {none}
      vdouble   PlotBounds          = {0,0}
