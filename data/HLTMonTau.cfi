@@ -11,58 +11,59 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
 
 	PSet MonitorSetup = 
 	{
     		untracked string     monitorName             = "DoubleTau"
 		untracked uint32     NTriggeredTaus          = 2
 		
-		untracked InputTag   L1Seed                = hltDoubleTauL1SeedFilter::HLT
-		untracked InputTag   L2EcalIsolJets        = hltL2DoubleTauIsolationSelector:Isolated
-	        untracked InputTag   L25PixelIsolJets      = hltIsolatedL25PixelTau
-	        untracked InputTag   L3SiliconIsolJets     =NOTHING
+		untracked InputTag   L1Seed                = hltFakeJetsDoubleTauL1SeedFilter::HLT1
+		untracked InputTag   L2Reco                = hltL2FakeJetsDoubleTauJets
+		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsDoubleTauIsolationSelectorLooseIsolation:Isolated
+	        untracked InputTag   L25PixelIsolJets      = NOTHING
+	        untracked InputTag   L3SiliconIsolJets     = NOTHING
 
 	        //BACKUP TRIGGERS
-		untracked bool       UseBackupTriggers        = false
-		untracked InputTag   MainFilter               = NOTHING
-		untracked InputTag   L1BackupFilter           = NOTHING
-		untracked InputTag   L2BackupFilter           = NOTHING
-		untracked InputTag   L25BackupFilter          = NOTHING
-		untracked InputTag   L3BackupFilter           = NOTHING
+		untracked bool     UseBackupTriggers        = false
+		untracked InputTag   MainFilter               = N
+		untracked InputTag   L1BackupFilter           = N		
+		untracked InputTag   L2BackupFilter           = N
+		untracked InputTag   L25BackupFilter          = N
+		untracked InputTag   L3BackupFilter           = N
+		untracked vint32   Prescales                = {1,1,1,1,1}
 
+		untracked VInputTag  refFilters               = {}
+		untracked vint32   refPrescales             = {1}
 
-		untracked VInputTag  refFilters            = {hltL1NonIsoDoubleElectronTrackIsolFilter::HLT}
-		untracked vstring   refFilterDescriptions = {"DoublePixelElectrons"}
-		untracked vdouble   refObjectPtCut        = {20.}
+		untracked vstring   refFilterDescriptions = {""}
+		untracked vdouble   refObjectPtCut        = {}
 	}
 
 
 	PSet L2Monitoring = 
 	{
 		untracked bool doL2Monitoring = true
-		untracked InputTag L2AssociationMap     =hltL2DoubleTauIsolationProducer:L2TauIsolationInfoAssociator
+		untracked InputTag L2AssociationMap     =hltL2FakeJetsDoubleTauIsolationProducer:L2TauIsolationInfoAssociator		
 	}
 
 
 
 	PSet L25Monitoring = 
 	{
-		untracked bool doL25Monitoring           = true
-		untracked InputTag L25IsolatedTauTagInfo =hltConeIsolationL25DoubleTau
+		untracked bool doL25Monitoring           = false
+		untracked InputTag L25IsolatedTauTagInfo = NOTHING
 
 	}
 
 	PSet L3Monitoring = 
 	{
 		untracked bool doL3Monitoring           = false
-		untracked InputTag L3IsolatedTauTagInfo =DUMMY
+		untracked InputTag L3IsolatedTauTagInfo =NOTHING
+
 
 	}
 
-
-	
 }
-
 
 sequence hltMonTauReco={hltDoubleTauMonitor}
