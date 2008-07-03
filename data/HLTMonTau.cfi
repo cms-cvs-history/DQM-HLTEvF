@@ -11,14 +11,14 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
 
 	PSet MonitorSetup = 
 	{
     		untracked string     monitorName             = "DoubleTau"
 		untracked uint32     NTriggeredTaus          = 2
 		
-		untracked InputTag   L1Seed                = hltFakeJetsDoubleTauL1SeedFilter::HLT1
+		untracked InputTag   L1Seed                = hltFakeJetsDoubleTauL1SeedFilter
 		untracked InputTag   L2Reco                = hltL2FakeJetsDoubleTauJets
 		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsDoubleTauIsolationSelectorLooseIsolation:Isolated
 	        untracked InputTag   L25PixelIsolJets      = NOTHING
@@ -72,8 +72,8 @@ module hltSingleTauNoL25Monitor = HLTTauDQMSource {
 
     	untracked bool    MonitorDaemon          = true
     	untracked bool    DaqMonitorBEInterface  = true
-	untracked string  outputFile             = "dqmOut.root"	
-	untracked bool    disable                =false 	
+	untracked string  outputFile             = ""	
+	untracked bool    disable                =true 	
 	untracked bool    verbose                =false
 	untracked int32   prescaleEvt            =-1
 	untracked double  HistEtMin              =0.
@@ -81,13 +81,13 @@ module hltSingleTauNoL25Monitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
 
 	PSet MonitorSetup = 
 	{
     		untracked string     monitorName             = "SingleTauNoPixel"
 		untracked uint32     NTriggeredTaus          = 1
-		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter::HLT1
+		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter
 		untracked InputTag   L2Reco                = hltL2FakeJetsSingleTauJets
 		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsSingleTauIsolationSelectorLooseL2Isolation:Isolated
 	        untracked InputTag   L25PixelIsolJets      = NOTHING
@@ -143,8 +143,8 @@ module hltSingleTauNoTrkMonitor = HLTTauDQMSource {
 
     	untracked bool    MonitorDaemon          = true
     	untracked bool    DaqMonitorBEInterface  = true
-	untracked string  outputFile             = "dqmOut.root"	
-	untracked bool    disable                =false 	
+	untracked string  outputFile             = ""	
+	untracked bool    disable                =true 	
 	untracked bool    verbose                =false
 	untracked int32   prescaleEvt            =-1
 	untracked double  HistEtMin              =0.
@@ -152,13 +152,13 @@ module hltSingleTauNoTrkMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
 
 	PSet MonitorSetup = 
 	{
     		untracked string     monitorName             = "SingleTauNoTrk"
 		untracked uint32     NTriggeredTaus          = 1
-		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter::HLT1
+		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter
 		untracked InputTag   L2Reco                = hltL2FakeJetsSingleTauJets
 		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsSingleTauIsolationSelectorLooseL2Isolation:Isolated
 	        untracked InputTag   L25PixelIsolJets      = NOTHING
