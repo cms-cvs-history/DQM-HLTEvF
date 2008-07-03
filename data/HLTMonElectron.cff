@@ -1,16 +1,26 @@
 include "DQM/HLTEvF/data/HLTMonElectron.cfi"
-//include "DQM/HLTEvF/data/doubleElectronDQM.cfi"
-//include "DQM/HLTEvF/data/doubleElectronRelaxedDQM.cfi"
-//include "DQM/HLTEvF/data/doublePhotonDQM.cfi"
-//include "DQM/HLTEvF/data/doublePhotonRelaxedDQM.cfi"
-//include "DQM/HLTEvF/data/highEtDQM.cfi"
-//include "DQM/HLTEvF/data/singleElectronDQM.cfi"
-//include "DQM/HLTEvF/data/singleElectronLargeWindowDQM.cfi"
-//include "DQM/HLTEvF/data/singleElectronRelaxedDQM.cfi"
-//include "DQM/HLTEvF/data/singleElectronRelaxedLargeWindowDQM.cfi"
-//include "DQM/HLTEvF/data/singlePhotonDQM.cfi"
-//include "DQM/HLTEvF/data/singlePhotonRelaxedDQM.cfi"
-//include "DQM/HLTEvF/data/veryHighEtDQM.cfi"
+include "DQM/HLTEvF/data/doubleElectronDQM.cfi"
+include "DQM/HLTEvF/data/doubleElectronRelaxedDQM.cfi"
+include "DQM/HLTEvF/data/doublePhotonDQM.cfi"
+include "DQM/HLTEvF/data/doublePhotonRelaxedDQM.cfi"
+include "DQM/HLTEvF/data/highEtDQM.cfi"
+include "DQM/HLTEvF/data/singleElectronDQM.cfi"
+include "DQM/HLTEvF/data/singleElectronLargeWindowDQM.cfi"
+include "DQM/HLTEvF/data/singleElectronRelaxedDQM.cfi"
+include "DQM/HLTEvF/data/singleElectronRelaxedLargeWindowDQM.cfi"
+include "DQM/HLTEvF/data/singlePhotonDQM.cfi"
+include "DQM/HLTEvF/data/singlePhotonRelaxedDQM.cfi"
+include "DQM/HLTEvF/data/veryHighEtDQM.cfi"
+
+path hltMonElectronPath = {hltMonE & singleElectronRelaxedDQM & 
+			singleElectronDQM & 
+			singlePhotonRelaxedDQM & 
+			singlePhotonDQM & 
+			doubleElectronRelaxedDQM & 
+			doubleElectronDQM & 
+			doublePhotonRelaxedDQM & 
+			doublePhotonDQM & 
+			highEtDQM & 
+			veryHighEtDQM}
 
 
-path hltMonElectronPath = {hltMonE}
