@@ -11,7 +11,7 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
 
 	PSet MonitorSetup = 
 	{
@@ -31,8 +31,11 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 		untracked string   L2BackupFilter           = ""
 		untracked string   L25BackupFilter          = ""
 		untracked string   L3BackupFilter           = ""
+		untracked vint32   Prescales                = {1,1,1,1,1}
 
-		untracked vstring  refFilters            = {""}
+		untracked vstring  refFilters               = {""}
+		untracked vint32   refPrescales             = {1}
+
 		untracked vstring   refFilterDescriptions = {""}
 		untracked vdouble   refObjectPtCut        = {}
 	}
@@ -65,7 +68,7 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 
 }
 
-module hltSingleTauMonitor = HLTTauDQMSource {
+module hltSingleTauNoL25Monitor = HLTTauDQMSource {
 
     	untracked bool    MonitorDaemon          = true
     	untracked bool    DaqMonitorBEInterface  = true
@@ -78,17 +81,88 @@ module hltSingleTauMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
 
 	PSet MonitorSetup = 
 	{
-    		untracked string     monitorName             = "SingleTau"
+    		untracked string     monitorName             = "SingleTauNoPixel"
 		untracked uint32     NTriggeredTaus          = 1
 		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter::HLT1
 		untracked InputTag   L2Reco                = hltL2FakeJetsSingleTauJets
 		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsSingleTauIsolationSelectorLooseL2Isolation:Isolated
 	        untracked InputTag   L25PixelIsolJets      = NOTHING
-	        untracked InputTag   L3SiliconIsolJets     = NOTHING
+	        untracked InputTag   L3SiliconIsolJets     = hltIsolatedL3FakeJetsSingleTauNoL25 
+
+	        //BACKUP TRIGGERS
+		untracked bool     UseBackupTriggers        = true
+		untracked string   MainFilter               = "hltFilterL3FakeJetsSingleTauNoL25"
+		untracked string   L1BackupFilter           = ""		
+		untracked string   L2BackupFilter           = ""
+		untracked string   L25BackupFilter          = ""
+		untracked string   L3BackupFilter           = "hltFilterL2FakeJetsSingleTauEcalIsolationLooseL2IsolationNoTrk"
+		untracked vint32   Prescales                = {1,1,1,1,1}
+
+
+		untracked vstring  refFilters            = {"hltL1NonIsoSinglePhotonEcalIsolFilter"}
+		untracked vint32   refPrescales          = {1}
+		untracked vstring   refFilterDescriptions = {"NonIsoPhoton"}
+		untracked vdouble   refObjectPtCut        = {5}
+	}
+
+
+	PSet L2Monitoring = 
+	{
+		untracked bool doL2Monitoring = true
+		untracked InputTag L2AssociationMap     =hltL2FakeJetsSingleTauIsolationProducer:L2TauIsolationInfoAssociator		
+	}
+
+
+
+	PSet L25Monitoring = 
+	{
+		untracked bool doL25Monitoring           = false
+		untracked InputTag L25IsolatedTauTagInfo = NOTHING
+		untracked double MatchingCone = 0.15
+		untracked double MinTrackPt   = 1.
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = true
+		untracked InputTag L3IsolatedTauTagInfo =hltConeIsolationL3FakeJetsSingleTauNoL25
+		untracked double MatchingCone = 0.15
+		untracked double MinTrackPt   = 1.
+
+	}
+
+
+	
+}
+
+module hltSingleTauNoTrkMonitor = HLTTauDQMSource {
+
+    	untracked bool    MonitorDaemon          = true
+    	untracked bool    DaqMonitorBEInterface  = true
+	untracked string  outputFile             = "dqmOut.root"	
+	untracked bool    disable                =false 	
+	untracked bool    verbose                =false
+	untracked int32   prescaleEvt            =-1
+	untracked double  HistEtMin              =0.
+	untracked double  HistEtMax              =100.
+	untracked int32   HistNEtBins            =50
+	untracked int32   HistNEtaBins           =50
+	untracked string  DQMFolder              ="HLT/HLTTAU"	
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
+
+	PSet MonitorSetup = 
+	{
+    		untracked string     monitorName             = "SingleTauNoTrk"
+		untracked uint32     NTriggeredTaus          = 1
+		untracked InputTag   L1Seed                = hltFakeJetsSingleTauL1SeedFilter::HLT1
+		untracked InputTag   L2Reco                = hltL2FakeJetsSingleTauJets
+		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsSingleTauIsolationSelectorLooseL2Isolation:Isolated
+	        untracked InputTag   L25PixelIsolJets      = NOTHING
+	        untracked InputTag   L3SiliconIsolJets     = NOTHING 
 
 	        //BACKUP TRIGGERS
 		untracked bool     UseBackupTriggers        = false
@@ -97,10 +171,13 @@ module hltSingleTauMonitor = HLTTauDQMSource {
 		untracked string   L2BackupFilter           = ""
 		untracked string   L25BackupFilter          = ""
 		untracked string   L3BackupFilter           = ""
+		untracked vint32   Prescales                = {1}
 
-		untracked vstring  refFilters            = {""}
-		untracked vstring   refFilterDescriptions = {""}
-		untracked vdouble   refObjectPtCut        = {}
+
+		untracked vstring  refFilters            = {"hltL1NonIsoSinglePhotonEcalIsolFilter"}
+		untracked vint32   refPrescales          = {1}
+		untracked vstring   refFilterDescriptions = {"NonIsoPhoton"}
+		untracked vdouble   refObjectPtCut        = {5}
 	}
 
 
@@ -123,7 +200,7 @@ module hltSingleTauMonitor = HLTTauDQMSource {
 	PSet L3Monitoring = 
 	{
 		untracked bool doL3Monitoring           = false
-		untracked InputTag L3IsolatedTauTagInfo =NOTHING
+		untracked InputTag L3IsolatedTauTagInfo = false
 		untracked double MatchingCone = 0.15
 		untracked double MinTrackPt   = 1.
 
@@ -132,4 +209,6 @@ module hltSingleTauMonitor = HLTTauDQMSource {
 
 	
 }
-sequence hltMonTauReco={hltDoubleTauMonitor&hltSingleTauMonitor}
+
+
+sequence hltMonTauReco={hltDoubleTauMonitor & hltSingleTauNoL25Monitor & hltSingleTauNoTrkMonitor}
