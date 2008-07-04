@@ -2,8 +2,8 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 
     	untracked bool    MonitorDaemon          = true
     	untracked bool    DaqMonitorBEInterface  = true
-	untracked string  outputFile             = ""	
-	untracked bool    disable                =true 	
+	untracked string  outputFile             = "output.root"	
+	untracked bool    disable                =false 	
 	untracked bool    verbose                =false
 	untracked int32   prescaleEvt            =-1
 	untracked double  HistEtMin              =0.
@@ -11,18 +11,19 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 	untracked int32   HistNEtBins            =50
 	untracked int32   HistNEtaBins           =50
 	untracked string  DQMFolder              ="HLT/HLTTAU"	
-	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT1
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT
 
 	PSet MonitorSetup = 
 	{
     		untracked string     monitorName             = "DoubleTau"
 		untracked uint32     NTriggeredTaus          = 2
-		
-		untracked InputTag   L1Seed                = hltFakeJetsDoubleTauL1SeedFilter::HLT1
-		untracked InputTag   L2Reco                = hltL2FakeJetsDoubleTauJets
-		untracked InputTag   L2EcalIsolJets        = hltL2FakeJetsDoubleTauIsolationSelectorLooseIsolation:Isolated
-	        untracked InputTag   L25PixelIsolJets      = NOTHING
+
+		untracked InputTag   L1Seed                = hltDoubleTauL1SeedFilter::HLT
+		untracked InputTag   L2Reco                = hltL2DoubleTauJets
+		untracked InputTag   L2EcalIsolJets        = hltL2DoubleTauIsolationSelector:Isolated
+	        untracked InputTag   L25PixelIsolJets      = hltIsolatedL25PixelTau
 	        untracked InputTag   L3SiliconIsolJets     = NOTHING
+
 
 	        //BACKUP TRIGGERS
 		untracked bool     UseBackupTriggers        = false
@@ -31,28 +32,28 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 		untracked InputTag   L2BackupFilter           = N
 		untracked InputTag   L25BackupFilter          = N
 		untracked InputTag   L3BackupFilter           = N
-		untracked vint32   Prescales                = {1,1,1,1,1}
+		untracked vint32     Prescales                = {0}
 
-		untracked VInputTag  refFilters               = {}
-		untracked vint32   refPrescales             = {1}
+		untracked VInputTag  refFilters               = {hltL1NonIsoDoubleElectronTrackIsolFilter::HLT}
+	        untracked vint32    refPrescales              = {1}
+		untracked vstring   refFilterDescriptions = {"DiElectrons"}
+		untracked vdouble   refObjectPtCut        = {15} 
 
-		untracked vstring   refFilterDescriptions = {""}
-		untracked vdouble   refObjectPtCut        = {}
 	}
 
 
 	PSet L2Monitoring = 
 	{
 		untracked bool doL2Monitoring = true
-		untracked InputTag L2AssociationMap     =hltL2FakeJetsDoubleTauIsolationProducer:L2TauIsolationInfoAssociator		
+		untracked InputTag L2AssociationMap     =hltL2DoubleTauIsolationProducer:L2TauIsolationInfoAssociator		
 	}
 
 
 
 	PSet L25Monitoring = 
 	{
-		untracked bool doL25Monitoring           = false
-		untracked InputTag L25IsolatedTauTagInfo = NOTHING
+		untracked bool doL25Monitoring           = true
+		untracked InputTag L25IsolatedTauTagInfo = hltConeIsolationL25PixelTauIsolated
 
 	}
 
@@ -65,5 +66,286 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 	}
 
 }
+
+
+module hltElectronTauMonitor = HLTTauDQMSource {
+
+    	untracked bool    MonitorDaemon          = true
+    	untracked bool    DaqMonitorBEInterface  = true
+	untracked string  outputFile             = ""	
+	untracked bool    disable                =true 	
+	untracked bool    verbose                =false
+	untracked int32   prescaleEvt            =-1
+	untracked double  HistEtMin              =0.
+	untracked double  HistEtMax              =100.
+	untracked int32   HistNEtBins            =50
+	untracked int32   HistNEtaBins           =50
+	untracked string  DQMFolder              ="HLT/HLTTAU"	
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT
+
+	PSet MonitorSetup = 
+	{
+    		untracked string     monitorName             = "ElectronTau"
+		untracked uint32     NTriggeredTaus          = 1
+		
+		untracked InputTag   L1Seed                = hltLevel1GTSeedElectronTau::HLT
+		untracked InputTag   L2Reco                = hltL2TauJetsElectronTau
+		untracked InputTag   L2EcalIsolJets        = hltL2ElectronTauIsolationSelector::Isolated
+	        untracked InputTag   L25PixelIsolJets      = hltIsolatedL25ElectronTau
+	        untracked InputTag   L3SiliconIsolJets     = NOTHING
+
+	        //BACKUP TRIGGERS
+		untracked bool     UseBackupTriggers        = false
+		untracked InputTag   MainFilter               = hltFilterIsolatedTauJetsL25ElectronTau::HLT
+		untracked InputTag   L1BackupFilter           = hltFilterL25DoubleTauNoL1Tau::HLT		
+		untracked InputTag   L2BackupFilter           = hltFilterL25ElectronTauNoL2::HLT
+		untracked InputTag   L25BackupFilter          = hltFilterL2ElectronTau::HLT
+		untracked InputTag   L3BackupFilter           = NOTHING
+   	        untracked vint32     Prescales                = {1,1,1,1,1}
+
+
+		untracked VInputTag  refFilters               = {hltL1NonIsoDoubleElectronTrackIsolFilter::HLT}
+		untracked vstring   refFilterDescriptions = {"Dielectrons"}
+		untracked vdouble   refObjectPtCut        = {15} 
+	        untracked vint32    refPrescales              = {1}
+
+	}
+
+
+	PSet L2Monitoring = 
+	{
+		untracked bool doL2Monitoring = true
+		untracked InputTag L2AssociationMap     = hltL2ElectronTauIsolationProducer:L2TauIsolationInfoAssociator 
+	}
+
+
+
+	PSet L25Monitoring = 
+	{
+		untracked bool doL25Monitoring           = true
+		untracked InputTag L25IsolatedTauTagInfo = hltConeIsolationL25ElectronTau
+
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = false
+		untracked InputTag L3IsolatedTauTagInfo =NOTHING
+
+
+	}
+
+}
+
+
+module hltMuonTauMonitor = HLTTauDQMSource {
+
+    	untracked bool    MonitorDaemon          = true
+    	untracked bool    DaqMonitorBEInterface  = true
+	untracked string  outputFile             = ""	
+	untracked bool    disable                =true 	
+	untracked bool    verbose                =false
+	untracked int32   prescaleEvt            =-1
+	untracked double  HistEtMin              =0.
+	untracked double  HistEtMax              =100.
+	untracked int32   HistNEtBins            =50
+	untracked int32   HistNEtaBins           =50
+	untracked string  DQMFolder              ="HLT/HLTTAU"	
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT
+
+	PSet MonitorSetup = 
+	{
+    		untracked string     monitorName             = "MuonTau"
+		untracked uint32     NTriggeredTaus          = 1
+		
+		untracked InputTag   L1Seed                = hltLevel1GTSeedMuonTau::HLT
+		untracked InputTag   L2Reco                = hltL2TauJetsMuonTau
+		untracked InputTag   L2EcalIsolJets        = hltL2MuonTauIsolationSelector::Isolated
+	        untracked InputTag   L25PixelIsolJets      = hltPixelTrackIsolatedTauJetsSelectorMuonTau 
+	        untracked InputTag   L3SiliconIsolJets     = NOTHING
+
+	        //BACKUP TRIGGERS
+		untracked bool     UseBackupTriggers        = false
+		untracked InputTag   MainFilter               = hltFilterPixelTrackIsolatedTauJetsMuonTau::HLT
+		untracked InputTag   L1BackupFilter           = hltFilterPixelTrackIsolatedTauJetsMuonTauNoL1Tau::HLT
+		untracked InputTag   L2BackupFilter           = hltFilterPixelTrackIsolatedTauJetsMuonTauNoL2::HLT
+		untracked InputTag   L25BackupFilter          = hltPixelTrackConeIsolationMuonTau::HLT
+		untracked InputTag   L3BackupFilter           = NOTHING
+		untracked vint32     Prescales                = {1,1,1,1,1}
+
+		untracked VInputTag  refFilters               = {hltemuNonIsoL1IsoTrackIsolFilter}
+		untracked vstring   refFilterDescriptions = {"ElectronMuon"}
+		untracked vdouble   refObjectPtCut        = {15} 
+	        untracked vint32    refPrescales              = {1}
+
+	}
+
+
+	PSet L2Monitoring = 
+	{
+		untracked bool doL2Monitoring = true
+		untracked InputTag L2AssociationMap     = hltL2MuonTauIsolationProducer:L2TauIsolationInfoAssociator 
+	}
+
+
+
+	PSet L25Monitoring = 
+	{
+		untracked bool doL25Monitoring           = true
+		untracked InputTag L25IsolatedTauTagInfo = hltPixelTrackConeIsolationMuonTau
+
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = false
+		untracked InputTag L3IsolatedTauTagInfo =NOTHING
+
+
+	}
+
+}
+
+module hltSingleTauMonitor = HLTTauDQMSource {
+
+    	untracked bool    MonitorDaemon          = true
+    	untracked bool    DaqMonitorBEInterface  = true
+	untracked string  outputFile             = ""	
+	untracked bool    disable                =true 	
+	untracked bool    verbose                =false
+	untracked int32   prescaleEvt            =-1
+	untracked double  HistEtMin              =0.
+	untracked double  HistEtMax              =100.
+	untracked int32   HistNEtBins            =50
+	untracked int32   HistNEtaBins           =50
+	untracked string  DQMFolder              ="HLT/HLTTAU"	
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT
+
+	PSet MonitorSetup = 
+	{
+    		untracked string     monitorName             = "SingleTau"
+		untracked uint32     NTriggeredTaus          = 1
+		
+		untracked InputTag   L1Seed                =  hltSingleTauL1SeedFilter::HLT
+		untracked InputTag   L2Reco                =  hltL2SingleTauJets
+		untracked InputTag   L2EcalIsolJets        =  hltL2SingleTauIsolationSelector:Isolated
+	        untracked InputTag   L25PixelIsolJets      =  hltIsolatedL25SingleTau
+	        untracked InputTag   L3SiliconIsolJets     =  hltIsolatedL3SingleTau
+
+	        //BACKUP TRIGGERS
+		untracked bool     UseBackupTriggers        = false
+		untracked InputTag   MainFilter               = N
+		untracked InputTag   L1BackupFilter           = N		
+		untracked InputTag   L2BackupFilter           = N
+		untracked InputTag   L25BackupFilter          = N
+		untracked InputTag   L3BackupFilter           = N
+		untracked vint32     Prescales                = {0}
+
+
+		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowSingleElectronTrackIsolFilter::HLT }
+		untracked vstring   refFilterDescriptions = {"SingleElectron"}
+		untracked vdouble   refObjectPtCut        = {20} 
+	        untracked vint32    refPrescales              = {1}
+
+	}
+
+
+	PSet L2Monitoring = 
+	{
+		untracked bool doL2Monitoring = true
+		untracked InputTag L2AssociationMap     =hltL2SingleTauIsolationProducer:L2TauIsolationInfoAssociator		
+	}
+
+
+
+	PSet L25Monitoring = 
+	{
+		untracked bool doL25Monitoring           = true
+		untracked InputTag L25IsolatedTauTagInfo = hltConeIsolationL25SingleTau
+
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = true
+		untracked InputTag L3IsolatedTauTagInfo = hltConeIsolationL3SingleTau
+
+
+	}
+
+}
+
+
+module hltSingleTauMETMonitor = HLTTauDQMSource {
+
+    	untracked bool    MonitorDaemon          = true
+    	untracked bool    DaqMonitorBEInterface  = true
+	untracked string  outputFile             = "DQMOutput.root"	
+	untracked bool    disable                =false 	
+	untracked bool    verbose                =false
+	untracked int32   prescaleEvt            =-1
+	untracked double  HistEtMin              =0.
+	untracked double  HistEtMax              =100.
+	untracked int32   HistNEtBins            =50
+	untracked int32   HistNEtaBins           =50
+	untracked string  DQMFolder              ="HLT/HLTTAU"	
+	untracked InputTag TriggerEvent          =hltTriggerSummaryAOD::HLT
+
+	PSet MonitorSetup = 
+	{
+    		untracked string     monitorName             = "SingleTauMET"
+		untracked uint32     NTriggeredTaus          = 1
+		
+		untracked InputTag   L1Seed                =  hltSingleTauMETL1SeedFilter::HLT
+		untracked InputTag   L2Reco                =  hltL2SingleTauMETJets
+		untracked InputTag   L2EcalIsolJets        =  hltL2SingleTauMETIsolationSelector:Isolated
+	        untracked InputTag   L25PixelIsolJets      =  hltIsolatedL25SingleTauMET
+	        untracked InputTag   L3SiliconIsolJets     =  hltIsolatedL3SingleTauMET
+
+	        //BACKUP TRIGGERS
+		untracked bool     UseBackupTriggers        = false
+		untracked InputTag   MainFilter               = N
+		untracked InputTag   L1BackupFilter           = N		
+		untracked InputTag   L2BackupFilter           = N
+		untracked InputTag   L25BackupFilter          = N
+		untracked InputTag   L3BackupFilter           = N
+		untracked vint32     Prescales                = {0}
+
+
+		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowSingleElectronTrackIsolFilter::HLT }
+		untracked vstring   refFilterDescriptions = {"SingleElectron"}
+		untracked vdouble   refObjectPtCut        = {20} 
+	        untracked vint32    refPrescales              = {1}
+
+	}
+
+
+	PSet L2Monitoring = 
+	{
+		untracked bool doL2Monitoring = true
+		untracked InputTag L2AssociationMap     =hltL2SingleTauMETIsolationProducer:L2TauIsolationInfoAssociator		
+	}
+
+
+
+	PSet L25Monitoring = 
+	{
+		untracked bool doL25Monitoring           = true
+		untracked InputTag L25IsolatedTauTagInfo = hltConeIsolationL25SingleTauMET
+
+	}
+
+	PSet L3Monitoring = 
+	{
+		untracked bool doL3Monitoring           = true
+		untracked InputTag L3IsolatedTauTagInfo = hltConeIsolationL3SingleTauMET
+
+
+	}
+
+}
+
+
+
 
 sequence hltMonTauReco={hltDoubleTauMonitor}
