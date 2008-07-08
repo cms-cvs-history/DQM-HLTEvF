@@ -28,8 +28,6 @@ bachtis@hep.wisc.edu
 
 
 
-
-
 //Electron includes
 
 #include "DataFormats/EgammaCandidates/interface/Electron.h"
@@ -139,15 +137,10 @@ private:
   std::string l2BackupPath_;
   std::string l25BackupPath_;
   std::string l3BackupPath_;
-  std::vector<int> prescales_;
-
 
 
   //Correlations with other Triggers
   std::vector<std::string> refFilters_;
-  std::vector<int> ref_prescales_;
-
-
   //  std::vector<int> refIDs_;
   std::vector<double> PtCut_;
   std::vector<std::string> refFilterDesc_;
