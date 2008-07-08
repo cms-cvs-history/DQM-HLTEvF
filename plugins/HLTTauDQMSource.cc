@@ -1203,27 +1203,31 @@ HLTTauDQMSource::importFilterColl(std::string& filter,const Event& iEvent)
 
       //Look at all Different triggers
       Handle<TriggerEvent> handle;
-      iEvent.getByLabel(triggerEvent_,handle);
-
-      //get All the final trigger objects
-      const TriggerObjectCollection& TOC(handle->getObjects());
-      
-      //filter index
-      size_t index = handle->filterIndex(filter);
-      if(index!=handle->sizeFilters())
+      if(iEvent.getByLabel(triggerEvent_,handle))
 	{
-	  const Keys& KEYS = handle->filterKeys(index);
-	  for(size_t i = 0;i<KEYS.size();++i)
+
+	  //get All the final trigger objects
+	  const TriggerObjectCollection& TOC(handle->getObjects());
+      
+	  //filter index
+	  size_t index = handle->filterIndex(filter);
+	  if(index!=handle->sizeFilters())
 	    {
-	      const TriggerObject& TO(TOC[KEYS[i]]);
-	      LV a(TO.px(),TO.py(),TO.pz(),TO.energy());
-		out.push_back(a);
+	      const Keys& KEYS = handle->filterKeys(index);
+	      for(size_t i = 0;i<KEYS.size();++i)
+		{
+		  const TriggerObject& TO(TOC[KEYS[i]]);
+		  LV a(TO.px(),TO.py(),TO.pz(),TO.energy());
+		  out.push_back(a);
+		}
+
+
 	    }
 
-
+	 
 	}
+ return out;
 
-      return out;
 }
 
 void 

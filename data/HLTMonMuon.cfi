@@ -6,17 +6,17 @@ module hltMonMu = HLTMon{
           untracked string outputFile ="./L1TDQM.root"
 	  uint32 reqNum = 1
 	VPSet filters = {
-        { InputTag  HLTCollectionLabels = hltZMML2Filtered::HLT
+        { InputTag  HLTCollectionLabels = hltZMML2Filtered::FU
           uint32    theHLTOutputTypes   = 93
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels = hltEMuL1MuonFilter::HLT
+        { InputTag  HLTCollectionLabels = hltEMuL1MuonFilter::FU
           uint32    theHLTOutputTypes   = 81
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels = hltSingleMuNoIsoL1Filtered::HLT
+        { InputTag  HLTCollectionLabels = hltSingleMuNoIsoL1Filtered::FU
           uint32    theHLTOutputTypes   = 81
           VInputTag IsoCollections      = {hltSingleMuNoIsoLevel1Seed}
           vdouble   PlotBounds          = {0,0}

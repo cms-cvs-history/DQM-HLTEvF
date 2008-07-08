@@ -1,8 +1,8 @@
-# $Id: FourVectorHLT.cfi,v 1.2 2008/05/26 07:59:36 wittich Exp $
+# $Id: FourVectorHLT.cfi,v 1.3 2008/06/11 10:01:31 lorenzo Exp $
     module hltResults = FourVectorHLT {
        untracked double ptMin = 0
        untracked double ptMax = 100
-       untracked bool plotAll = false
+       untracked bool plotAll = true
        # this is I think MC
        #InputTag triggerSummaryLabel = "hltTriggerSummaryAOD::HLT"
        # this is data (CRUZET I or II best guess)

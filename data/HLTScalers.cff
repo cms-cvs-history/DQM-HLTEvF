@@ -1,0 +1,4 @@
+include "DQM/TrigXMonitor/data/HLTScalers.cfi"
+replace hlts.triggerResults = "TriggerResults::FU"
+replace hlts.l1GtData       = "hltGtDigis::FU"
+ path p_scalers = { hlts }
