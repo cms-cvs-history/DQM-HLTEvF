@@ -34,7 +34,7 @@ module hltDoubleTauMonitor = HLTTauDQMSource {
 		untracked InputTag   L3BackupFilter           = N
 		untracked vint32     Prescales                = {0}
 
-		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowDoubleElectronTrackIsolFilter::HLT1}
+		untracked VInputTag  refFilters               = {hltL1IsoLargeWindowDoubleElectronTrackIsolFilter::HLT1}
 	        untracked vint32    refPrescales              = {1}
 		untracked vstring   refFilterDescriptions = {"DiElectrons"}
 		untracked vint32    refFilterIDs          = {11}
@@ -105,7 +105,7 @@ module hltElectronTauMonitor = HLTTauDQMSource {
 		untracked InputTag   L3BackupFilter           = NOTHING
 
 
-		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowDoubleElectronTrackIsolFilter::HLT1}
+		untracked VInputTag  refFilters               = {hltL1IsoLargeWindowDoubleElectronTrackIsolFilter::HLT1}
 		untracked vstring   refFilterDescriptions = {"Dielectrons"}
 		untracked vint32    refFilterIDs          = {11}
 
@@ -251,7 +251,7 @@ module hltSingleTauMonitor = HLTTauDQMSource {
 
 
 
-		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowSingleElectronTrackIsolFilter::HLT1 }
+		untracked VInputTag  refFilters               = {hltL1IsoLargeWindowSingleElectronTrackIsolFilter::HLT1}
 		untracked vint32    refFilterIDs          = {11}
 		untracked vstring   refFilterDescriptions = {"SingleElectron"}
 		untracked vdouble   refObjectPtCut        = {30.} 
@@ -324,7 +324,7 @@ module hltSingleTauMETMonitor = HLTTauDQMSource {
 
 
 
-		untracked VInputTag  refFilters               = {hltL1NonIsoLargeWindowSingleElectronTrackIsolFilter::HLT1 }
+		untracked VInputTag  refFilters               = {hltL1IsoLargeWindowSingleElectronTrackIsolFilter::HLT1}
 		untracked vint32    refFilterIDs          = {11}
 		untracked vstring   refFilterDescriptions = {"SingleElectron"}
 		untracked vdouble   refObjectPtCut        = {20} 
