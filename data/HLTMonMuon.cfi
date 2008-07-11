@@ -20,6 +20,76 @@ module hltMonMu = HLTMon{
           uint32    theHLTOutputTypes   = 81
           VInputTag IsoCollections      = {hltSingleMuNoIsoLevel1Seed}
           vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL2IsoFiltered::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL3IsoFiltered::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+      	{ InputTag  HLTCollectionLabels = hltSingleMuNoIsoL1Filtered10::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltSingleMuNoIsoLevel1Seed10}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL2IsoFiltered13::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL3IsoFiltered13::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL2IsoFiltered15::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL3IsoFiltered15::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL2IsoFiltered9::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuIsoL3OIstateIsoFiltered::HLT
+          uint32    theHLTOutputTypes   = 93
+          VInputTag IsoCollections      = {none}
+          vdouble   PlotBounds          = {0,0}
+        },
+      	{ InputTag  HLTCollectionLabels = hltMuLevel1PathL1OpenFiltered::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltMuLevel1PathLevel1OpenSeed}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltMuLevel1PathL1Filtered::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltMuLevel1PathLevel1Seed}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuPrescale5L1Filtered::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltSingleMuPrescale5Level1Seed}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuPrescale710L1Filtered::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltSingleMuPrescale710Level1Seed}
+          vdouble   PlotBounds          = {0,0}
+        },
+	{ InputTag  HLTCollectionLabels = hltSingleMuPrescale77L1Filtered::HLT
+          uint32    theHLTOutputTypes   = 81
+          VInputTag IsoCollections      = {hltSingleMuPrescale77Level1Seed}
+          vdouble   PlotBounds          = {0,0}
         }
       }
 }

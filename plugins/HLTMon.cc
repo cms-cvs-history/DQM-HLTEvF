@@ -160,14 +160,19 @@ HLTMon::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 template <class T> void HLTMon::fillHistos(edm::Handle<trigger::TriggerEventWithRefs>& triggerObj,const edm::Event& iEvent  ,unsigned int n){
   
   std::vector<edm::Ref<T> > particlecands;
-  if (!( triggerObj->filterIndex(theHLTCollectionLabels[n])>=triggerObj->size() )){ // only process if availabel  
+  //std::cout << "fillHistos" << std::endl;
+  //for(int i = 0; i < triggerObj->size(); i++){
+//	std::cout << triggerObj->filterLabel(i) << std::endl;
+//}
+  if (!( triggerObj->filterIndex(theHLTCollectionLabels[n].label())>=triggerObj->size() )){ // only process if availabel  
     // retrieve saved filter objects
-    triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n]),theHLTOutputTypes[n],particlecands);
+    
+triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n].label()),theHLTOutputTypes[n],particlecands);
     //Danger: special case, L1 non-isolated
     // needs to be merged with L1 iso
     if(theHLTOutputTypes[n]==82){
       std::vector<edm::Ref<T> > isocands;
-      triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n]),83,isocands);
+      triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n].label()),83,isocands);
       if(isocands.size()>0)
 	for(unsigned int i=0; i < isocands.size(); i++)
 	  particlecands.push_back(isocands[i]);
@@ -268,7 +273,7 @@ HLTMon::beginJob(const edm::EventSetup&)
 	thePtMaxTemp = thePtMax;
 	thePtMinTemp = thePtMin;
 	//}
-	histoTitle = theHLTCollectionLabels[i].label() + " Et";
+      histoTitle = theHLTCollectionLabels[i].label() + " Et";
       tmphisto =  dbe->book1D(histoname.c_str(),histoTitle.c_str(),theNbins,thePtMinTemp,thePtMaxTemp);
       tmphisto->setAxisTitle("Number of Events", 2);
       tmphisto->setAxisTitle("p_{T}", 1);
@@ -294,8 +299,8 @@ HLTMon::beginJob(const edm::EventSetup&)
       -3.14, 3.14);
       tmphisto->setAxisTitle("#phi", 2);
       tmphisto->setAxisTitle("#eta", 1);
-      eta_phihist.push_back(tmphisto);	
-
+      eta_phihist.push_back(tmphisto);
+      
       if(plotiso[i]){
 	histoname = theHLTCollectionLabels[i].label()+"eta isolation";
 	tmphisto = dbe->book2D(histoname.c_str(),histoname.c_str(),theNbins,-2.7,2.7,theNbins,plotBounds[i].first,plotBounds[i].second);
@@ -306,6 +311,15 @@ HLTMon::beginJob(const edm::EventSetup&)
       etahistiso.push_back(tmphisto);
       
       if(plotiso[i]){
+	histoname = theHLTCollectionLabels[i].label()+"phi isolation";
+	tmphisto = dbe->book2D(histoname.c_str(),histoname.c_str(),theNbins,-3.14,3.14,theNbins,plotBounds[i].first,plotBounds[i].second);
+      }
+      else{
+	tmphisto = NULL;
+      }
+      phihistiso.push_back(tmphisto);
+      
+      if(plotiso[i]){
 	histoname = theHLTCollectionLabels[i].label()+"et isolation";
 	tmphisto = dbe->book2D(histoname.c_str(),histoname.c_str(),theNbins,thePtMin,thePtMax,theNbins,plotBounds[i].first,plotBounds[i].second);
       }
@@ -314,17 +328,6 @@ HLTMon::beginJob(const edm::EventSetup&)
       }
       ethistiso.push_back(tmphisto);
       
-
-      if(plotiso[i]){
-	histoname = theHLTCollectionLabels[i].label()+"phi isolation";
-	tmphisto = dbe->book2D(histoname.c_str(),histoname.c_str(),theNbins,-3.14,3.14,theNbins,plotBounds[i].first,plotBounds[i].second);
-      }
-      else{
-	tmphisto = NULL;
-      }
-      phihistiso.push_back(tmphisto);
-	
-
     } 
   } // end "if(dbe)"
 }

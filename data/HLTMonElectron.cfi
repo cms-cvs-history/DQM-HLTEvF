@@ -11,7 +11,8 @@
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels =  hltL1NonIsoHLTNonIsoSingleElectronLWEt12L1MatchFilterRegional::HLT
+        { InputTag  HLTCollectionLabels = 
+	hltL1NonIsoHLTNonIsoSingleElectronLWEt12L1MatchFilterRegional::HLT
           uint32    theHLTOutputTypes   = 100
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
@@ -21,26 +22,278 @@
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12HcalIsolFilter::HLT
+        { InputTag  HLTCollectionLabels =
+	hltL1NonIsoHLTNonIsoSingleElectronLWEt12HcalIsolFilter::HLT
           uint32    theHLTOutputTypes   = 100
           VInputTag IsoCollections      = {hltL1NonIsolatedElectronHcalIsol}
           vdouble   PlotBounds          = {0,10}
         },
-        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12PixelMatchFilter::HLT
+        { InputTag  HLTCollectionLabels =
+	hltL1NonIsoHLTNonIsoSingleElectronLWEt12PixelMatchFilter::HLT
           uint32    theHLTOutputTypes   = 100
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12HOneOEMinusOneOPFilter::HLT
+        { InputTag  HLTCollectionLabels =
+	hltL1NonIsoHLTNonIsoSingleElectronLWEt12HOneOEMinusOneOPFilter::HLT
           uint32    theHLTOutputTypes   = 100
           VInputTag IsoCollections      = {none}
           vdouble   PlotBounds          = {0,0}
         },
-        { InputTag  HLTCollectionLabels = hltL1NonIsoHLTNonIsoSingleElectronLWEt12TrackIsolFilter::HLT
+        { InputTag  HLTCollectionLabels =
+	hltL1NonIsoHLTNonIsoSingleElectronLWEt12TrackIsolFilter::HLT
           uint32    theHLTOutputTypes   = 92
           VInputTag IsoCollections      = {hltL1NonIsoLargeWindowElectronTrackIsol}
           vdouble   PlotBounds          = {0,10}
-        }
-      }
+        },
+        { InputTag  HLTCollectionLabels = hltL1seedDoubleEgamma::HLT
+    	  uint32    theHLTOutputTypes   = 83
+    	  VInputTag IsoCollections      = {none}
+    	  vdouble   PlotBounds          = {0,0}
+  	},
+  	{ InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronL1MatchFilterRegional::HLT
+    	  uint32    theHLTOutputTypes   = 100
+   	  VInputTag IsoCollections      = {none}
+    	  vdouble   PlotBounds          = {0,0}
+	},
+        { InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronEtFilter::HLT
+	  uint32    theHLTOutputTypes   = 100
+          VInputTag IsoCollections      = {none}   
+          vdouble   PlotBounds          = {0,0}
+   	},
+   	{ InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronHcalIsolFilter::HLT
+   	  uint32    theHLTOutputTypes   = 100
+   	  VInputTag IsoCollections      = {hltL1IsolatedElectronHcalIsol::HLT}
+   	  vdouble   PlotBounds          = {0,10}
+   	},
+   	{ InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronPixelMatchFilter::HLT
+       	uint32    theHLTOutputTypes   = 100  
+    	 VInputTag IsoCollections      = {none}
+    	 vdouble   PlotBounds          = {0,0}
+   	},
+   	{ InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronEoverpFilter::HLT
+    	 uint32    theHLTOutputTypes   = 92   
+   	  VInputTag IsoCollections      = {none}
+   	  vdouble   PlotBounds          = {0,0}
+   	},
+  	{ InputTag  HLTCollectionLabels = hltL1IsoDoubleElectronTrackIsolFilter::HLT
+    	  uint32    theHLTOutputTypes   = 92   
+    	  VInputTag IsoCollections      = {hltL1IsoElectronTrackIsol::HLT}
+     	vdouble   PlotBounds          = {0,10}
+	   },
+        { InputTag  HLTCollectionLabels = hltL1seedRelaxedDoubleEgamma::HLT
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronL1MatchFilterRegional::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronHcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1IsolatedElectronHcalIsol::HLT,hltL1NonIsolatedElectronHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronPixelMatchFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronEoverpFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoubleElectronTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections      =
+     {hltL1IsoElectronTrackIsol::HLT,hltL1NonIsoElectronTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+    { InputTag  HLTCollectionLabels = hltL1seedDoubleEgamma::HLT
+     uint32    theHLTOutputTypes   = 83
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoDoublePhotonL1MatchFilterRegional::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoDoublePhotonEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoDoublePhotonEcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {hltL1IsolatedPhotonEcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoDoublePhotonHcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {hltL1IsolatedPhotonHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+    { InputTag  HLTCollectionLabels = hltL1IsoDoublePhotonTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 91   
+     VInputTag IsoCollections      = {hltL1IsoPhotonTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1seedRelaxedDoubleEgamma::HLT
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonL1MatchFilterRegional::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonEcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1IsolatedPhotonEcalIsol::HLT,hltL1NonIsolatedPhotonEcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonHcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1IsolatedPhotonHcalIsol::HLT,hltL1NonIsolatedPhotonHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 91   
+     VInputTag IsoCollections      = {hltL1IsoPhotonTrackIsol::HLT,hltL1NonIsoPhotonTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoDoublePhotonDoubleEtFilter::HLT
+     uint32    theHLTOutputTypes   = 91   
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+    { InputTag  HLTCollectionLabels = hltL1seedRelaxedSingleEgamma::HLT
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtL1MatchFilterRegional::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSinglePhotonEMHighEtEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtEcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1IsolatedPhotonEcalIsol::HLT,hltL1NonIsolatedPhotonEcalIsol::HLT}
+     vdouble   PlotBounds          = {0,200}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHOEFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1NonIsolatedElectronHcalIsol::HLT,hltL1IsolatedElectronHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,200}
+   },
+    { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtHcalDBCFilter::HLT
+     uint32    theHLTOutputTypes   = 100  
+     VInputTag IsoCollections      = {hltHcalDoubleCone::HLT,hltL1NonIsoEMHcalDoubleCone::HLT}
+     vdouble   PlotBounds          = {0,200}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleEMHighEtTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 91   
+     VInputTag IsoCollections      = {hltL1IsoPhotonTrackIsol::HLT,hltL1NonIsoPhotonTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1seedSingleEgamma::HLT
+     uint32    theHLTOutputTypes   = 83
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoSingleL1MatchFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoSingleElectronEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoSingleElectronHcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {hltL1IsolatedElectronHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoSingleElectronPixelMatchFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+    { InputTag  HLTCollectionLabels = hltL1IsoSingleElectronHOneOEMinusOneOPFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1IsoSingleElectronTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections      = {hltL1IsoElectronTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+    { InputTag  HLTCollectionLabels = hltL1seedRelaxedSingleEgamma::HLT
+     uint32    theHLTOutputTypes   = 82
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronL1MatchFilterRegional::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronEtFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronHcalIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      =
+     {hltL1IsolatedElectronHcalIsol::HLT,hltL1NonIsolatedElectronHcalIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronPixelMatchFilter::HLT
+     uint32    theHLTOutputTypes   = 100
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+    { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronHOneOEMinusOneOPFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections      = {none}
+     vdouble   PlotBounds          = {0,0}
+   },
+   { InputTag  HLTCollectionLabels = hltL1NonIsoSingleElectronTrackIsolFilter::HLT
+     uint32    theHLTOutputTypes   = 92   
+     VInputTag IsoCollections     =
+     {hltL1IsoElectronTrackIsol::HLT,hltL1NonIsoElectronTrackIsol::HLT}
+     vdouble   PlotBounds          = {0,10}
+   }
+      
+	}
 }
-
