@@ -1,0 +1,2 @@
+module  electronDQMIsoDistTrigger = hltHighLevel from "HLTrigger/HLTfilters/data/hltHighLevel.cfi"
+replace electronDQMIsoDistTrigger.HLTPaths = {"HLT_LooseIsoEle15_LW_L1R"}
