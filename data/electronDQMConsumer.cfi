@@ -1,0 +1,13 @@
+
+  module electronDQMConsumer = HLTMonElectronConsumer  { 
+   untracked bool MonitorDaemon = true
+   untracked bool DaqMonitorBEInterface = true
+   untracked bool disableROOToutput = true
+   untracked string outputFile ="./L1TDQMConsumer.root"
+
+ 	
+   InputTag PixelTag = electronDQMPixelMatch
+   InputTag IsoTag   = electronDQMIsoDist
+
+ }
+
