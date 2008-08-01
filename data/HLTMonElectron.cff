@@ -2,6 +2,7 @@ include "DQM/HLTEvF/data/HLTMonElectron.cfi"
 include "DQM/HLTEvF/data/electronDQMIsoDistTrigger.cfi"
 include "DQM/HLTEvF/data/electronDQMIsoDist.cfi"
 include "DQM/HLTEvF/data/electronDQMPixelMatch.cfi"
+include "DQM/HLTEvF/data/electronDQMConsumer.cfi"
 //include "DQM/HLTEvF/data/doubleElectronDQM.cfi"
 //include "DQM/HLTEvF/data/doubleElectronRelaxedDQM.cfi"
 //include "DQM/HLTEvF/data/doublePhotonDQM.cfi"
@@ -17,4 +18,4 @@ include "DQM/HLTEvF/data/electronDQMPixelMatch.cfi"
 
 
 //path hltMonElectronPath = {hltMonE}
-path hltMonElectronPath = {electronDQMIsoDistTrigger, electronDQMIsoDist, electronDQMPixelMatch}
+path hltMonElectronPath = {electronDQMIsoDistTrigger, electronDQMIsoDist, electronDQMPixelMatch, electronDQMConsumer}
