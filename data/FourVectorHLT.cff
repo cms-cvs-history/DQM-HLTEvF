@@ -1,2 +1,0 @@
-include "DQM/HLTEvF/data/FourVectorHLT.cfi"
-path hlt4vector = {  hltResults }

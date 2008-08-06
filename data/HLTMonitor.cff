@@ -1,7 +1,0 @@
-# $Id: HLTMonitor.cff,v 1.6 2008/07/08 10:01:44 wittich Exp $
-include "DQM/HLTEvF/data/HLTMonElectron.cff"
-include "DQM/HLTEvF/data/HLTMonMuon.cff"
-include "DQM/HLTEvF/data/HLTMonTau.cff"
-include "DQM/HLTEvF/data/FourVectorHLT.cff"
-include "DQM/HLTEvF/data/HLTEventInfoClient.cff"
-//include "DQM/HLTEvF/data/HLTScalers.cff"

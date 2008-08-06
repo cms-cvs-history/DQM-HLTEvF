@@ -1,2 +1,0 @@
-include "DQM/HLTEvF/data/HLTMonTau.cfi"
-path hltMonTau = { hltMonTauReco }

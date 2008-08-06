@@ -1,2 +1,0 @@
-include "DQM/HLTEvF/data/HLTMonMuon.cfi"
-path hltMonMuon = { hltMonMu }
