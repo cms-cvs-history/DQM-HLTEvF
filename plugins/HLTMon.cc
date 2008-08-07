@@ -182,7 +182,7 @@ triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n].label()
     if (particlecands.size()!=0){
       if(particlecands.size() >= reqNum ) 
 	total->Fill(n+0.5);
-      for (unsigned int i=0; i<particlecands.size(); i++) {
+      for (unsigned int i=0; i<particlecands.size() && particlecands[i].isAvailable(); i++) {
 	//unmatched
 	ethist[n]->Fill(particlecands[i]->et() );
 	etahist[n]->Fill(particlecands[i]->eta() );
@@ -194,14 +194,19 @@ triggerObj->getObjects(triggerObj->filterIndex(theHLTCollectionLabels[n].label()
 	  if(plotiso[n+1]){
 	    for(unsigned int j =  0 ; j < isoNames[n+1].size() ;j++  ){
 	      edm::Handle<edm::AssociationMap<edm::OneToValue< T , float > > > depMap; 
-	      iEvent.getByLabel(isoNames[n+1].at(j).label(),depMap);
-	      typename edm::AssociationMap<edm::OneToValue< T , float > >::const_iterator mapi = depMap->find(particlecands[i]);
-	      if(mapi!=depMap->end()){  // found candidate in isolation map! 
-		etahistiso[n+1]->Fill(particlecands[i]->eta(),mapi->val);
-		ethistiso[n+1]->Fill(particlecands[i]->et(),mapi->val);
-		phihistiso[n+1]->Fill(particlecands[i]->phi(),mapi->val);
-		break; // to avoid multiple filling we only look until we found the candidate once.
-	      }
+	      try{
+	           iEvent.getByLabel(isoNames[n+1].at(j).label(),depMap);
+                   typename edm::AssociationMap<edm::OneToValue< T , float > >::const_iterator mapi = depMap->find(particlecands[i]);
+	           if(mapi!=depMap->end()){  // found candidate in isolation map! 
+		     etahistiso[n+1]->Fill(particlecands[i]->eta(),mapi->val);
+		     ethistiso[n+1]->Fill(particlecands[i]->et(),mapi->val);
+		     phihistiso[n+1]->Fill(particlecands[i]->phi(),mapi->val);
+		     break; // to avoid multiple filling we only look until we found the candidate once.
+	           }
+                 }
+               catch(...){
+               edm::LogWarning("HLTMon") << "IsoName collection not found";  
+                 }
 	    }
 	  }	  	  
 	}
