@@ -1,0 +1,5 @@
+module hltEventInfoClient = HLTEventInfoClient{
+    untracked string monitorDir = ""
+    untracked int32 prescaleLS = -1
+    untracked int32 prescaleEvt = 1
+}
