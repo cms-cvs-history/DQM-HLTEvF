@@ -1,0 +1,34 @@
+<TESTSCONFIGURATION>
+
+
+<QTEST name="DeadChannels">
+         <TYPE>DeadChannel</TYPE>
+         <PARAM name="error">0.99</PARAM>
+         <PARAM name="warning">0.50</PARAM>
+         <PARAM name="threshold">3</PARAM>
+</QTEST>
+
+<QTEST name="HotChannels">
+         <TYPE>NoisyChannel</TYPE>
+         <PARAM name="error">0.99</PARAM>
+         <PARAM name="warning">0.99</PARAM>
+         <PARAM name="tolerance">10</PARAM>
+         <PARAM name="neighbours">3</PARAM>
+</QTEST>
+
+<LINK name="*Filtereta">
+        <TestName activate="true">HotChannels</TestName>
+</LINK>
+
+<LINK name="*Filteredeta">
+        <TestName activate="true">HotChannels</TestName>
+</LINK>
+
+
+<LINK name="*Filteredphi">
+	<TestName activate="true">HotChannels</TestName>
+</LINK>
+
+
+</TESTSCONFIGURATION>
+
