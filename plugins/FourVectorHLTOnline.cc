@@ -1,4 +1,4 @@
-// $Id: FourVectorHLTOnline.cc,v 1.5 2009/03/27 04:13:08 berryhil Exp $
+// $Id: FourVectorHLTOnline.cc,v 1.28 2009/02/26 22:30:17 berryhil Exp $
 // See header file for information. 
 #include "TMath.h"
 
@@ -18,7 +18,7 @@
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
-#include "DataFormats/Math/interface/deltaR.h"
+#include "PhysicsTools/Utilities/interface/deltaR.h"
 
 #include "DQMServices/Core/interface/MonitorElement.h"
 
@@ -81,31 +81,18 @@ FourVectorHLTOnline::FourVectorHLTOnline(const edm::ParameterSet& iConfig):
 
   electronEtaMax_ = iConfig.getUntrackedParameter<double>("electronEtaMax",2.5);
   electronEtMin_ = iConfig.getUntrackedParameter<double>("electronEtMin",3.0);
-  electronDRMatch_  =iConfig.getUntrackedParameter<double>("electronDRMatch",0.3); 
-
   muonEtaMax_ = iConfig.getUntrackedParameter<double>("muonEtaMax",2.5);
   muonEtMin_ = iConfig.getUntrackedParameter<double>("muonEtMin",3.0);
-  muonDRMatch_  =iConfig.getUntrackedParameter<double>("muonDRMatch",0.3); 
-
   tauEtaMax_ = iConfig.getUntrackedParameter<double>("tauEtaMax",2.5);
   tauEtMin_ = iConfig.getUntrackedParameter<double>("tauEtMin",3.0);
-  tauDRMatch_  =iConfig.getUntrackedParameter<double>("tauDRMatch",0.3); 
-
   jetEtaMax_ = iConfig.getUntrackedParameter<double>("jetEtaMax",5.0);
   jetEtMin_ = iConfig.getUntrackedParameter<double>("jetEtMin",10.0);
-  jetDRMatch_  =iConfig.getUntrackedParameter<double>("jetDRMatch",0.3); 
-
   bjetEtaMax_ = iConfig.getUntrackedParameter<double>("bjetEtaMax",2.5);
   bjetEtMin_ = iConfig.getUntrackedParameter<double>("bjetEtMin",10.0);
-  bjetDRMatch_  =iConfig.getUntrackedParameter<double>("bjetDRMatch",0.3); 
-
   photonEtaMax_ = iConfig.getUntrackedParameter<double>("photonEtaMax",2.5);
   photonEtMin_ = iConfig.getUntrackedParameter<double>("photonEtMin",3.0);
-  photonDRMatch_  =iConfig.getUntrackedParameter<double>("photonDRMatch",0.3); 
-
   trackEtaMax_ = iConfig.getUntrackedParameter<double>("trackEtaMax",2.5);
   trackEtMin_ = iConfig.getUntrackedParameter<double>("trackEtMin",3.0);
-  trackDRMatch_  =iConfig.getUntrackedParameter<double>("trackDRMatch",0.3); 
 
   metMin_ = iConfig.getUntrackedParameter<double>("metMin",10.0);
   htMin_ = iConfig.getUntrackedParameter<double>("htMin",10.0);
@@ -134,35 +121,29 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   using namespace edm;
   using namespace trigger;
   ++nev_;
-  // LogDebug("FourVectorHLTOnline")<< "FourVectorHLTOnline: analyze...." ;
+  LogDebug("FourVectorHLTOnline")<< "FourVectorHLTOnline: analyze...." ;
   
   edm::Handle<TriggerResults> triggerResults;
   iEvent.getByLabel(triggerResultsLabel_,triggerResults);
-  if(!triggerResults.isValid()) {
-    edm::InputTag triggerResultsLabelFU(triggerResultsLabel_.label(),triggerResultsLabel_.instance(), "FU");
-   iEvent.getByLabel(triggerResultsLabelFU,triggerResults);
-  if(!triggerResults.isValid()) {
+  if(!triggerResults.isValid()) { 
     edm::LogInfo("FourVectorHLTOnline") << "TriggerResults not found, "
       "skipping event"; 
     return;
-   }
   }
   TriggerNames triggerNames(*triggerResults);  
   int npath = triggerResults->size();
 
   edm::Handle<TriggerEvent> triggerObj;
   iEvent.getByLabel(triggerSummaryLabel_,triggerObj); 
-  if(!triggerObj.isValid()) {
-    edm::InputTag triggerSummaryLabelFU(triggerSummaryLabel_.label(),triggerSummaryLabel_.instance(), "FU");
-   iEvent.getByLabel(triggerSummaryLabelFU,triggerObj);
-  if(!triggerObj.isValid()) {
-    edm::LogInfo("FourVectorHLTOnline") << "TriggerEvent not found, "
+  if(!triggerObj.isValid()) { 
+    edm::LogInfo("FourVectorHLTOnline") << "Summary HLT objects not found, "
       "skipping event"; 
     return;
-   }
   }
+  
   const trigger::TriggerObjectCollection & toc(triggerObj->getObjects());
 
+ 
     for(PathInfoCollection::iterator v = hltPaths_.begin();
 	v!= hltPaths_.end(); ++v ) 
 { 
@@ -170,16 +151,11 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   int NOn = 0;
   int NL1 = 0;
   int NL1On = 0;
-  int NL1OnUM = 0;
 
   // did we pass the denomPath?
-  bool denompassed = false;  
+  bool denompassed = false;
   for(int i = 0; i < npath; ++i) {
-     if (triggerNames.triggerName(i).find(v->getDenomPath()) != std::string::npos && triggerResults->accept(i))
-       { 
-        denompassed = true;
-        break;
-       }
+     if (triggerNames.triggerName(i) == v->getDenomPath() && triggerResults->accept(i)) denompassed = true;
   }
 
   if (denompassed)
@@ -203,9 +179,8 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       //if (l1k.size() == 0) cout << v->getl1Path() << endl;
       //l1accept = true;
 
-      // for muon triggers, loop over and fill offline 4-vectors
+      // for muon triggers, loop over and fill online 4-vectors
       if (triggertype == trigger::TriggerMuon || triggertype == trigger::TriggerL1Mu){
-
         if (l1accept)
          {
           trigger::Vids::const_iterator idtypeiter = idtype.begin(); 
@@ -220,17 +195,15 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
          }
       }
 
-      // for electron triggers, loop over and fill offline 4-vectors
+      // for electron triggers, loop over and fill online 4-vectors
      else if (triggertype == trigger::TriggerElectron || triggertype == trigger::TriggerL1NoIsoEG || triggertype == trigger::TriggerL1IsoEG)
 	{
-
 	  //	  std::cout << "Electron trigger" << std::endl;
 
         if (l1accept)
@@ -246,18 +219,16 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
-	   }
+	    }
             ++idtypeiter;
 	   }
          }
 	}
     
 
-      // for tau triggers, loop over and fill offline 4-vectors
+      // for tau triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerTau || triggertype == trigger::TriggerL1TauJet)
 	{
-
 
         if (l1accept)
          {
@@ -273,7 +244,6 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
@@ -283,7 +253,7 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
 
 
-      // for jet triggers, loop over and fill offline 4-vectors
+      // for jet triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerJet || triggertype == trigger::TriggerL1CenJet || triggertype == trigger::TriggerL1ForJet)
 	{
 
@@ -301,7 +271,6 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
@@ -309,10 +278,10 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
 	}
 
-      // for bjet triggers, loop over and fill offline 4-vectors
+      // for bjet triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerBJet)
 	{ 
-	
+
         if (l1accept)
          {
           trigger::Vids::const_iterator idtypeiter = idtype.begin(); 
@@ -327,17 +296,15 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
          }
 
 	}
-      // for met triggers, loop over and fill offline 4-vectors
+      // for met triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerMET || triggertype == trigger::TriggerL1ETM)
 	{
-
 
         if (l1accept)
          {
@@ -353,17 +320,14 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
-	      }
-
+	   }
             ++idtypeiter;
 	   }
          }
 
 	}
-      else if (triggertype == trigger::TriggerTET || triggertype == trigger::TriggerL1ETT)
+      else if (triggertype == trigger::TriggerHT || triggertype == trigger::TriggerL1ETT)
 	{
-
 
         if (l1accept)
          {
@@ -379,14 +343,13 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
          }
 
 	}
-      // for photon triggers, loop over and fill offline and L1 4-vectors
+      // for photon triggers, loop over and fill online and L1 4-vectors
       else if (triggertype == trigger::TriggerPhoton)
 	{
 
@@ -404,14 +367,13 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	      v->getL1EtaVsL1PhiL1Histo()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	     }
 
-
 	   }
             ++idtypeiter;
 	   }
          }
 	}
 
-      // for IsoTrack triggers, loop over and fill offline and L1 4-vectors
+      // for IsoTrack triggers, loop over and fill online and L1 4-vectors
       else if (triggertype == trigger::TriggerTrack)
 	{
 
@@ -477,7 +439,7 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	//	     << filterTag << endl;
 	continue; // not in this event
       }
-      //LogDebug("FourVectorHLTOnline") << "filling ... " ;
+      LogDebug("FourVectorHLTOnline") << "filling ... " ;
       const trigger::Keys & k = triggerObj->filterKeys(index);
       //      const trigger::Vids & idtype = triggerObj->filterIds(index);
       // assume for now the first object type is the same as all objects in the collection
@@ -528,34 +490,27 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	v->getOnEtaVsOnPhiOnHisto()->Fill(toc[*ki].eta(), toc[*ki].phi());
 	  }
 	//	  cout << "pdgId "<<toc[*ki].id() << endl;
-      // for muon triggers, loop over and fill offline 4-vectors
+      // for muon triggers, loop over and fill online 4-vectors
       if (triggertype == trigger::TriggerMuon || triggertype == trigger::TriggerL1Mu)
 	{
-
 
           trigger::Vids::const_iterator idtypeiter = idtype.begin(); 
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1Mu)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < muonDRMatch_ && fabs(toc[*l1ki].eta()) <= muonEtaMax_ && toc[*l1ki].pt() >= muonEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= muonEtaMax_ && toc[*l1ki].pt() >= muonEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= muonEtaMax_ && toc[*l1ki].pt() >= muonEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
 
-      }
+	}
 
-      // for electron triggers, loop over and fill offline 4-vectors
+      // for electron triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerElectron || triggertype == trigger::TriggerL1IsoEG || triggertype == trigger::TriggerL1NoIsoEG )
 	{
 	  //	  std::cout << "Electron trigger" << std::endl;
@@ -564,17 +519,11 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1IsoEG || *idtypeiter == trigger::TriggerL1NoIsoEG)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < electronDRMatch_ && fabs(toc[*l1ki].eta()) <= electronEtaMax_ && toc[*l1ki].pt() >= electronEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= electronEtaMax_ && toc[*l1ki].pt() >= electronEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= electronEtaMax_ && toc[*l1ki].pt() >= electronEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
               }
 	    ++idtypeiter;
@@ -584,36 +533,28 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
 
 
-      // for tau triggers, loop over and fill offline 4-vectors
+      // for tau triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerTau || triggertype == trigger::TriggerL1TauJet)
 	{
-
 
           trigger::Vids::const_iterator idtypeiter = idtype.begin(); 
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1TauJet || *idtypeiter == trigger::TriggerL1ForJet)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < tauDRMatch_ && fabs(toc[*l1ki].eta()) <= tauEtaMax_ && toc[*l1ki].pt() >= tauEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= tauEtaMax_ && toc[*l1ki].pt() >= tauEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= tauEtaMax_ && toc[*l1ki].pt() >= tauEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
 
-
       }
 
 
-      // for jet triggers, loop over and fill offline 4-vectors
+      // for jet triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerJet || triggertype == trigger::TriggerL1CenJet || triggertype == trigger::TriggerL1ForJet )
 	{
 
@@ -621,26 +562,19 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1TauJet || *idtypeiter == trigger::TriggerL1ForJet || *idtypeiter == trigger::TriggerL1CenJet)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < jetDRMatch_ && fabs(toc[*l1ki].eta()) <= jetEtaMax_ && toc[*l1ki].pt() >= jetEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= jetEtaMax_ && toc[*l1ki].pt() >= jetEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= jetEtaMax_ && toc[*l1ki].pt() >= jetEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
 
-
       }
 
-      // for bjet triggers, loop over and fill offline 4-vectors
+      // for bjet triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerBJet)
 	{
 
@@ -648,25 +582,18 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1ForJet || *idtypeiter == trigger::TriggerL1CenJet)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < bjetDRMatch_ && fabs(toc[*l1ki].eta()) <= bjetEtaMax_ && toc[*l1ki].pt() >= bjetEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= bjetEtaMax_ && toc[*l1ki].pt() >= bjetEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= bjetEtaMax_ && toc[*l1ki].pt() >= bjetEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
 
-
 	}
-      // for met triggers, loop over and fill offline 4-vectors
+      // for met triggers, loop over and fill online 4-vectors
       else if (triggertype == trigger::TriggerMET || triggertype == trigger::TriggerL1ETM )
 	{
 
@@ -674,20 +601,19 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1ETM)
 	      {
-		//   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && toc[*l1ki].pt() >= metMin_ )
-		// {
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && toc[*l1ki].pt() >= metMin_ )
+            {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	     // }
+	    }
               }
 	    ++idtypeiter;
 	  }
 
-
       }
-      // for sumet triggers, loop over and fill offline 4-vectors
-      else if (triggertype == trigger::TriggerTET || triggertype == trigger::TriggerL1ETT )
+      // for sumet triggers, loop over and fill online 4-vectors
+      else if (triggertype == trigger::TriggerHT || triggertype == trigger::TriggerL1ETT )
 	{
 
           trigger::Vids::const_iterator idtypeiter = idtype.begin(); 
@@ -704,12 +630,10 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	    ++idtypeiter;
 	  }
 
-
-
       }
 
 
-      // for photon triggers, loop over and fill offline and L1 4-vectors
+      // for photon triggers, loop over and fill online and L1 4-vectors
       else if (triggertype == trigger::TriggerPhoton)
 	{
 
@@ -717,27 +641,20 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1IsoEG || *idtypeiter == trigger::TriggerL1NoIsoEG)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < photonDRMatch_ && fabs(toc[*l1ki].eta()) <= photonEtaMax_ && toc[*l1ki].pt() >= photonEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= photonEtaMax_ && toc[*l1ki].pt() >= photonEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= photonEtaMax_ && toc[*l1ki].pt() >= photonEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
 
-
 	}// photon trigger type
 
 
-      // for track triggers, loop over and fill offline and L1 4-vectors
+      // for track triggers, loop over and fill online and L1 4-vectors
       else if (triggertype == trigger::TriggerTrack)
 	{
 
@@ -745,22 +662,15 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           for (trigger::Keys::const_iterator l1ki = l1k.begin(); l1ki !=l1k.end(); ++l1ki ) {
 	    if (*idtypeiter == trigger::TriggerL1CenJet || *idtypeiter == trigger::TriggerL1ForJet || *idtypeiter == trigger::TriggerL1TauJet)
 	      {
-	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < trackDRMatch_ && fabs(toc[*l1ki].eta()) <= trackEtaMax_ && toc[*l1ki].pt() >= trackEtMin_ )
+	   if (reco::deltaR(toc[*l1ki].eta(),toc[*l1ki].phi(),toc[*ki].eta(),toc[*ki].phi()) < 0.3 && fabs(toc[*l1ki].eta()) <= trackEtaMax_ && toc[*l1ki].pt() >= trackEtMin_ )
             {
 	     NL1On++;
 	     v->getL1EtL1OnHisto()->Fill(toc[*l1ki].pt());
 	     v->getL1EtaVsL1PhiL1OnHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
 	    }
-	   if (NOn==1 && fabs(toc[*l1ki].eta()) <= trackEtaMax_ && toc[*l1ki].pt() >= trackEtMin_ )
-            {
-	     NL1OnUM++;
-	     v->getL1EtL1OnUMHisto()->Fill(toc[*l1ki].pt());
-	     v->getL1EtaVsL1PhiL1OnUMHisto()->Fill(toc[*l1ki].eta(),toc[*l1ki].phi());
-	    }
               }
 	    ++idtypeiter;
 	  }
-
 
 	}// track trigger type
 
@@ -768,8 +678,6 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
       v->getNOnHisto()->Fill(NOn);      
       v->getNL1OnHisto()->Fill(NL1On);      
-      v->getNL1OnUMHisto()->Fill(NL1OnUM);      
-  
 
     } //numpassed
     
@@ -817,10 +725,7 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
 // HLT config does not change within runs!
  
   if (!hltConfig_.init(processname_)) {
-    processname_ = "FU";
-    if (!hltConfig_.init(processname_)){
   LogDebug("FourVectorHLTOnline") << "HLTConfigProvider failed to initialize.";
-    }
     // check if trigger name in (new) config
     //	cout << "Available TriggerNames are: " << endl;
     //	hltConfig_.dump("Triggers");
@@ -852,7 +757,9 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     if (pathname.find("MET") != std::string::npos) 
       objectType = trigger::TriggerMET;    
     if (pathname.find("SumET") != std::string::npos) 
-      objectType = trigger::TriggerTET;    
+      objectType = trigger::TriggerHT;    
+    if (pathname.find("HT") != std::string::npos) 
+      objectType = trigger::TriggerHT;    
     if (pathname.find("Jet") != std::string::npos) 
       objectType = trigger::TriggerJet;    
     if (pathname.find("BTag") != std::string::npos) 
@@ -872,7 +779,9 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     if (denompathname.find("MET") != std::string::npos) 
       denomobjectType = trigger::TriggerMET;    
     if (denompathname.find("SumET") != std::string::npos) 
-      denomobjectType = trigger::TriggerTET;    
+      denomobjectType = trigger::TriggerHT;    
+    if (denompathname.find("HT") != std::string::npos) 
+      denomobjectType = trigger::TriggerHT;    
     if (denompathname.find("Jet") != std::string::npos) 
       denomobjectType = trigger::TriggerJet;    
     if (denompathname.find("BTag") != std::string::npos) 
@@ -925,7 +834,7 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     {
      // plot all diagonal combinations plus any other specified pairs
     for (unsigned int i=0; i!=n; ++i) {
-      std::string denompathname = "";  
+      std::string denompathname = hltConfig_.triggerName(i);  
       std::string pathname = hltConfig_.triggerName(i);  
       std::string l1pathname = "dummy";
       int objectType = 0;
@@ -934,7 +843,9 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     if (pathname.find("MET") != std::string::npos) 
       objectType = trigger::TriggerMET;    
     if (pathname.find("SumET") != std::string::npos) 
-      objectType = trigger::TriggerTET;    
+      objectType = trigger::TriggerHT;    
+    if (pathname.find("HT") != std::string::npos) 
+      objectType = trigger::TriggerHT;    
     if (pathname.find("Jet") != std::string::npos) 
       objectType = trigger::TriggerJet;    
     if (pathname.find("BTag") != std::string::npos) 
@@ -954,7 +865,9 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     if (denompathname.find("MET") != std::string::npos) 
       denomobjectType = trigger::TriggerMET;    
     if (denompathname.find("SumET") != std::string::npos) 
-      denomobjectType = trigger::TriggerTET;    
+      denomobjectType = trigger::TriggerHT;    
+    if (denompathname.find("HT") != std::string::npos) 
+      denomobjectType = trigger::TriggerHT;    
     if (denompathname.find("Jet") != std::string::npos) 
       denomobjectType = trigger::TriggerJet;    
     if (denompathname.find("BTag") != std::string::npos) 
@@ -995,16 +908,6 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     std::string filtername("dummy");
     float ptMin = 0.0;
     float ptMax = 100.0;
-    if (objectType == trigger::TriggerPhoton) ptMax = 100.0;
-    if (objectType == trigger::TriggerElectron) ptMax = 100.0;
-    if (objectType == trigger::TriggerMuon) ptMax = 100.0;
-    if (objectType == trigger::TriggerTau) ptMax = 100.0;
-    if (objectType == trigger::TriggerJet) ptMax = 300.0;
-    if (objectType == trigger::TriggerBJet) ptMax = 300.0;
-    if (objectType == trigger::TriggerMET) ptMax = 300.0;
-    if (objectType == trigger::TriggerTET) ptMax = 300.0;
-    if (objectType == trigger::TriggerTrack) ptMax = 100.0;
-
     if (objectType != 0){
     hltPaths_.push_back(PathInfo(denompathname, pathname, l1pathname, filtername, processname_, objectType, ptMin, ptMax));
       //create folder for pathname
@@ -1046,7 +949,9 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     if (pathname.find("MET") != std::string::npos) 
       objectType = trigger::TriggerMET;    
     if (pathname.find("SumET") != std::string::npos) 
-      objectType = trigger::TriggerTET;    
+      objectType = trigger::TriggerHT;    
+    if (pathname.find("HT") != std::string::npos) 
+      objectType = trigger::TriggerHT;    
     if (pathname.find("Jet") != std::string::npos) 
       objectType = trigger::TriggerJet;    
     if (pathname.find("BTag") != std::string::npos) 
@@ -1089,16 +994,6 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     std::string filtername("dummy");
     float ptMin = 0.0;
     float ptMax = 100.0;
-    if (objectType == trigger::TriggerPhoton) ptMax = 100.0;
-    if (objectType == trigger::TriggerElectron) ptMax = 100.0;
-    if (objectType == trigger::TriggerMuon) ptMax = 100.0;
-    if (objectType == trigger::TriggerTau) ptMax = 100.0;
-    if (objectType == trigger::TriggerJet) ptMax = 300.0;
-    if (objectType == trigger::TriggerBJet) ptMax = 300.0;
-    if (objectType == trigger::TriggerMET) ptMax = 300.0;
-    if (objectType == trigger::TriggerTET) ptMax = 300.0;
-    if (objectType == trigger::TriggerTrack) ptMax = 100.0;
-
     if (objectType != 0)
     hltPaths_.push_back(PathInfo(denompathname, pathname, l1pathname, filtername, processname_, objectType, ptMin, ptMax));
     
@@ -1115,7 +1010,6 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
     	MonitorElement *NOn, *onEtOn, *onEtavsonPhiOn=0;
 	MonitorElement *NL1, *l1EtL1, *l1Etavsl1PhiL1=0;
     	MonitorElement *NL1On, *l1EtL1On, *l1Etavsl1PhiL1On=0;
-    	MonitorElement *NL1OnUM, *l1EtL1OnUM, *l1Etavsl1PhiL1OnUM=0;
 	std::string labelname("dummy");
         labelname = v->getPath() + "_wrt_" + v->getDenomPath();
 	std::string histoname(labelname+"_NOn");
@@ -1179,13 +1073,6 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
 			  0.5,
 			  10.5);
 
-	histoname = labelname+"_NL1OnUM";
-	title = labelname+" N L1OnUM";
-	NL1OnUM =  dbe->book1D(histoname.c_str(),
-			  title.c_str(),10,
-			  0.5,
-			  10.5);
-
         histoname = labelname+"_onEtOn";
 	title = labelname+" onE_t online";
 	onEtOn =  dbe->book1D(histoname.c_str(),
@@ -1230,22 +1117,8 @@ void FourVectorHLTOnline::beginRun(const edm::Run& run, const edm::EventSetup& c
 				nBins2D,-histEtaMax,histEtaMax,
 				nBins2D,-TMath::Pi(), TMath::Pi());
 
-	histoname = labelname+"_l1EtL1OnUM";
-	title = labelname+" l1E_t L1+onlineUM";
-	l1EtL1OnUM =  dbe->book1D(histoname.c_str(),
-			   title.c_str(),nBins_, 
-                           v->getPtMin(),
-			   v->getPtMax());
 
-	histoname = labelname+"_l1Etal1PhiL1OnUM";
-	title = labelname+" l1#eta vs l1#phi L1+onlineUM";
-	l1Etavsl1PhiL1OnUM =  dbe->book2D(histoname.c_str(),
-				title.c_str(),
-				nBins2D,-histEtaMax,histEtaMax,
-				nBins2D,-TMath::Pi(), TMath::Pi());
-
-	v->setHistos( NOn, onEtOn, onEtavsonPhiOn, NL1, l1EtL1, l1Etavsl1PhiL1, NL1On, l1EtL1On, l1Etavsl1PhiL1On, NL1OnUM, l1EtL1OnUM, l1Etavsl1PhiL1OnUM
-);
+	v->setHistos( NOn, onEtOn, onEtavsonPhiOn, NL1, l1EtL1, l1Etavsl1PhiL1, NL1On, l1EtL1On, l1Etavsl1PhiL1On);
 
 
     }
