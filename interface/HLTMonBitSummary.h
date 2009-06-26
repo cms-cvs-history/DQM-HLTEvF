@@ -51,11 +51,10 @@ private:
   std::vector<unsigned int> count_;
 
   std::vector <std::vector <std::string> > triggerFilters_;
-  std::vector <std::vector <uint> > triggerFilterIndices_;
-
+  //vector <int > nFilters_;
 
   unsigned int total_;
-  unsigned int nValidTriggers_;
+  int nValidTriggers_;
   static const int NTRIG = 20;
 
   //std::string out_;
