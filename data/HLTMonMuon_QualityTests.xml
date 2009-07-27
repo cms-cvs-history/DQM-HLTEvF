@@ -34,6 +34,12 @@
 <LINK name="*HLTMuonL1_phi_norm"> 
 	<TestName activate="true">PhiFlatness</TestName>
 </LINK>
+<LINK name="*HLTMuonL2_phi_norm"> 
+	<TestName activate="true">PhiFlatness</TestName>
+</LINK>
+<LINK name="*HLTMuonL3_phi_norm"> 
+	<TestName activate="true">PhiFlatness</TestName>
+</LINK>
 <LINK name="*HLTMuonL1_phi"> 
 	<TestName activate="true">KSComparison</TestName>
 </LINK>
