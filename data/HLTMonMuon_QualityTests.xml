@@ -8,7 +8,7 @@
 <QTEST name="PhiFlatness">
 	<TYPE>ContentsYRange</TYPE>	
 	<PARAM name="ymin">0</PARAM>
-	<PARAM name="ymax">0.02</PARAM>
+	<PARAM name="ymax">0.014</PARAM>
         <PARAM name="useEmptyBins">1</PARAM>
 	<PARAM name="error">0.30</PARAM>
 	<PARAM name="warning">0.70</PARAM>
@@ -31,71 +31,72 @@
 	<PARAM name="error">0.30</PARAM>
 	<PARAM name="warning">0.70</PARAM>
 </QTEST>
-<LINK name="*HLTMuonL1_phi_renorm_test"> 
-	<TestName activate="false">PhiFlatness</TestName>
+<LINK name="*HLTMuonL1_phi_norm"> 
+	<TestName activate="true">PhiFlatness</TestName>
 </LINK>
-<LINK name="*/Combined/Level1/HLTMuonL1_phi"> 
+<LINK name="*HLTMuonL1_phi"> 
 	<TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level1/HLTMuonL1_eta">
+<LINK name="*/L1PassThrough/Level1/HLTMuonL1_eta">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level1/HLTMuonL1_pt">
+<LINK name="*/L1PassThrough/Level1/HLTMuonL1_pt">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level1/HLTMuonL1_charge">
+<LINK name="*/L1PassThrough/Level1/HLTMuonL1_charge">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_phi">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_phi">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_eta">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_eta">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_pt">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_pt">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_charge">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_charge">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_d0">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_d0">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_dr">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_dr">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_dz">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_dz">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level2/HLTMuonL2_dz0">
+<LINK name="*/L1PassThrough/Level2/HLTMuonL2_dz0">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_phi">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_phi">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_eta">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_eta">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_pt">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_pt">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_charge">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_charge">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_d0">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_d0">
        	<TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_dr">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_dr">
        	<TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_dz">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_dz">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*/Combined/Level3/HLTMuonL3_dz0">
+<LINK name="*/L1PassThrough/Level3/HLTMuonL3_dz0">
         <TestName activate="true">KSComparison</TestName>
 </LINK>
-<LINK name="*HLTMuonL1_phiresphi">
-	<TestName activate="false">ResidualFit</TestName>
+<LINK name="*HLTMuonL1toL3_phiresphi">
+	<TestName activate="true">ResidualFit</TestName>
 </LINK>
 </TESTSCONFIGURATION>
+
 
