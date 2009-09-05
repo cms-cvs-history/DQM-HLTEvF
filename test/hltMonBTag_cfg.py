@@ -47,4 +47,4 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-process.dqm = cms.Path( process.hltMonBTagIPSource + process.hltMonBTagMuSource  + process.hltMonBTagIPClient + hltMonBTagMuClient )
+process.dqm = cms.Path( process.hltMonBTagIPSource + process.hltMonBTagMuSource  + process.hltMonBTagIPClient + process.hltMonBTagMuClient )
