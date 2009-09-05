@@ -9,6 +9,12 @@ process.hltMonBTagIPSource.storeROOT  = True
 process.load("DQM.HLTEvF.hltMonBTagMuSource_cfi")
 process.hltMonBTagMuSource.storeROOT = True
 
+process.load("DQM.HLTEvF.hltMonBTagIPClient_cfi")
+process.hltMonBTagIPClient.storeROOT = True
+
+process.load("DQM.HLTEvF.hltMonBTagMuClient_cfi")
+process.hltMonBTagMuClient.storeROOT = True
+
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
@@ -41,4 +47,4 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-process.dqm = cms.Path( process.hltMonBTagIPSource + process.hltMonBTagMuSource )
+process.dqm = cms.Path( process.hltMonBTagIPSource + process.hltMonBTagMuSource  + process.hltMonBTagIPClient + hltMonBTagMuClient )
