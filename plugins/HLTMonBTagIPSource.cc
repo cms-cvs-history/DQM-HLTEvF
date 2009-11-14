@@ -47,7 +47,6 @@ HLTMonBTagIPSource::HLTMonBTagIPSource(const edm::ParameterSet & config) :
   m_storeROOT(      config.getUntrackedParameter<bool>("storeROOT", false) ),
   m_size(           config.getParameter<unsigned int>("interestingJets") ),
   m_dbe(),
-  m_init(           false ),
   m_pathIndex(      (unsigned int) -1 ),
   m_L1FilterIndex(  (unsigned int) -1 ),
   m_L2FilterIndex(  (unsigned int) -1 ),
@@ -174,21 +173,11 @@ void HLTMonBTagIPSource::endJob() {
 void HLTMonBTagIPSource::beginRun(const edm::Run & run, const edm::EventSetup & setup) {
   HLTConfigProvider configProvider;
   if (not configProvider.init(m_processName))
-  {
-    edm::LogWarning("ConfigurationError") << "process name \"" << m_processName << "\" is not valid.";
-    m_init = false;
-    return;
-  }
+    throw cms::Exception("ConfigurationError") << "process name \"" << m_processName << "\" is not valid.";
 
   m_pathIndex = configProvider.triggerIndex( m_pathName );
   if (m_pathIndex == configProvider.size())
-  {
-    edm::LogWarning("ConfigurationError") << "trigger name \"" << m_pathName << "\" is not valid.";
-    m_init = false;
-    return;
-  }
-
-  m_init = true;
+    throw cms::Exception("ConfigurationError") << "trigger name \"" << m_pathName << "\" is not valid.";
 
   // if their call fails, these will be set to one after the last valid module for their path
   // so they will never be "passed"
@@ -222,9 +211,6 @@ void HLTMonBTagIPSource::endLuminosityBlock(const edm::LuminosityBlock & lumi, c
 
 void HLTMonBTagIPSource::analyze(const edm::Event & event, const edm::EventSetup & setup) {
   if (not m_dbe.isAvailable())
-    return;
-
-  if (not m_init)
     return;
 
   edm::Handle<edm::TriggerResults> h_triggerResults;
@@ -264,7 +250,7 @@ void HLTMonBTagIPSource::analyze(const edm::Event & event, const edm::EventSetup
     m_plotRates->Fill( 5. );    // HLT accepted
 
   if ((latest > m_L1FilterIndex) and h_L2Jets.isValid()) {
-    unsigned int size = std::min(h_L2Jets->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L2Jets->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::Jet & jet = (*h_L2Jets)[i];
       m_plotL2JetsEnergy->Fill( jet.energy() );
@@ -276,7 +262,7 @@ void HLTMonBTagIPSource::analyze(const edm::Event & event, const edm::EventSetup
     }
   }
   if ((latest > m_L2FilterIndex) and h_L25TagInfo.isValid() and h_L25JetTags.isValid()) {
-    unsigned int size = std::min(h_L25TagInfo->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L25TagInfo->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::TrackIPTagInfo & info   = (*h_L25TagInfo)[i];
       const reco::Jet & jet = * info.jet();
@@ -318,7 +304,7 @@ void HLTMonBTagIPSource::analyze(const edm::Event & event, const edm::EventSetup
     }
   }
   if ((latest > m_L25FilterIndex) and h_L3TagInfo.isValid() and h_L3JetTags.isValid()) {
-    unsigned int size = std::min(h_L3TagInfo->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L3TagInfo->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::TrackIPTagInfo & info   = (*h_L3TagInfo)[i];
       const reco::Jet & jet = * info.jet();

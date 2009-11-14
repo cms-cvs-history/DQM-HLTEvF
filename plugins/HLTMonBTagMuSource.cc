@@ -48,7 +48,6 @@ HLTMonBTagMuSource::HLTMonBTagMuSource(const edm::ParameterSet & config) :
   m_storeROOT(      config.getUntrackedParameter<bool>("storeROOT", false) ),
   m_size(           config.getParameter<unsigned int>("interestingJets") ),
   m_dbe(),
-  m_init(           false ),
   m_pathIndex(      (unsigned int) -1 ),
   m_L1FilterIndex(  (unsigned int) -1 ),
   m_L2FilterIndex(  (unsigned int) -1 ),
@@ -158,22 +157,12 @@ void HLTMonBTagMuSource::endJob() {
 
 void HLTMonBTagMuSource::beginRun(const edm::Run & run, const edm::EventSetup & setup) {
   HLTConfigProvider configProvider;
-  if (not configProvider.init(m_processName)) 
-  {
-    edm::LogWarning("ConfigurationError") << "process name \"" << m_processName << "\" is not valid.";
-    m_init = false;
-    return;
-  }
+  if (not configProvider.init(m_processName))
+    throw cms::Exception("ConfigurationError") << "process name \"" << m_processName << "\" is not valid.";
 
   m_pathIndex = configProvider.triggerIndex( m_pathName );
-  if (m_pathIndex == configProvider.size()) 
-  {
-    edm::LogWarning("ConfigurationError") << "trigger name \"" << m_pathName << "\" is not valid.";
-    m_init = false;
-    return;
-  }
-
-  m_init = true;
+  if (m_pathIndex == configProvider.size())
+    throw cms::Exception("ConfigurationError") << "trigger name \"" << m_pathName << "\" is not valid.";
 
   // if their call fails, these will be set to one after the last valid module for their path
   // so they will never be "passed"
@@ -209,9 +198,6 @@ void HLTMonBTagMuSource::analyze(const edm::Event & event, const edm::EventSetup
   if (not m_dbe.isAvailable())
     return;
   
-  if (not m_init)
-    return;
-
   edm::Handle<edm::TriggerResults>               h_triggerResults;
   edm::Handle<edm::View<reco::Jet> >             h_L2Jets;
   edm::Handle<reco::SoftLeptonTagInfoCollection> h_L25TagInfo;
@@ -249,7 +235,7 @@ void HLTMonBTagMuSource::analyze(const edm::Event & event, const edm::EventSetup
     m_plotRates->Fill( 5. );    // HLT accepted
 
   if ((latest > m_L1FilterIndex) and h_L2Jets.isValid()) {
-    unsigned int size = std::min(h_L2Jets->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L2Jets->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::Jet & jet = (*h_L2Jets)[i];
       m_plotL2JetsEnergy->Fill( jet.energy() );
@@ -261,7 +247,7 @@ void HLTMonBTagMuSource::analyze(const edm::Event & event, const edm::EventSetup
     }
   }
   if ((latest > m_L2FilterIndex) and h_L25TagInfo.isValid() and h_L25JetTags.isValid()) {
-    unsigned int size = std::min(h_L25TagInfo->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L25TagInfo->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::SoftLeptonTagInfo & info   = (*h_L25TagInfo)[i];
       const reco::Jet    & jet = * info.jet();
@@ -287,7 +273,7 @@ void HLTMonBTagMuSource::analyze(const edm::Event & event, const edm::EventSetup
     }
   }
   if ((latest > m_L25FilterIndex) and h_L3TagInfo.isValid() and h_L3JetTags.isValid()) {
-    unsigned int size = std::min(h_L3TagInfo->size(), m_size);
+    unsigned int size = std::min((unsigned int) h_L3TagInfo->size(), m_size);
     for (unsigned int i = 0; i < size; ++i) {
       const reco::SoftLeptonTagInfo & info   = (*h_L3TagInfo)[i];
       const reco::Jet    & jet = * info.jet();

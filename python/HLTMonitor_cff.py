@@ -2,7 +2,6 @@ import FWCore.ParameterSet.Config as cms
 
 from DQM.HLTEvF.HLTMonElectron_cff import *
 #from DQM.HLTEvF.HLTMonMuon_cff import *
-from DQM.HLTEvF.hltMonBTag_cff import *
 from DQM.HLTEvF.HLTMonTau_cff import *
 from DQM.HLTEvF.FourVectorHLTOnline_cff import *
 #from DQM.HLTEvF.HLTEventInfoClient_cff import *
