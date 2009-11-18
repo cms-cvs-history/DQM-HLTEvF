@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 hltMonjmDQM = cms.EDFilter("HLTJetMETDQMSource",
     dirname = cms.untracked.string("HLT/JetMET"),
     DQMStore = cms.untracked.bool(True),                      
-    #verbose = cms.untracked.bool(True),                        
+    verbose = cms.untracked.bool(False),                        
     plotAll = cms.untracked.bool(True),
     plotwrtMu = cms.untracked.bool(True),
     plotEff = cms.untracked.bool(True),
