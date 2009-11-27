@@ -194,13 +194,14 @@ void HLTEventInfoClient::endLuminosityBlock(const edm::LuminosityBlock& lumiSeg,
 
   int nSubsystems = 20;
   for (int k = 0; k < nSubsystems; k++) {
-    if(k == 1 && muonResult != -1){
-      summaryContent[k] = muonResult;
-      reportSummaryContent_[k]->Fill(muonResult);
-    }else{
+    // mask all HLT applications
+    //if(k == 1 && muonResult != -1){
+    //  summaryContent[k] = muonResult;
+    //  reportSummaryContent_[k]->Fill(muonResult);
+    //}else{
       summaryContent[k] = 1;
       reportSummaryContent_[k]->Fill(1.);
-    }
+    //}
   }
   summarySum = 0;
 
