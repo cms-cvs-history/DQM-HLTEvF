@@ -40,8 +40,10 @@ HLTMonBitSummary::HLTMonBitSummary(const edm::ParameterSet& iConfig) :
   nValidTriggers_(0),
   ndenomAccept_(0)
 {
+  denominatorWild_ = iConfig.getUntrackedParameter<std::string>("denominatorWild","");
   denominator_ = iConfig.getUntrackedParameter<std::string>("denominator");
   directory_ = iConfig.getUntrackedParameter<std::string>("directory","HLT/HLTMonMuon");
+  histLabel_ = iConfig.getUntrackedParameter<std::string>("histLabel","Muon");
   //label_ = iConfig.getParameter<std::string>("label");
   //  out_ = iConfig.getUntrackedParameter<std::string>("out","");
 
@@ -112,11 +114,22 @@ void HLTMonBitSummary::beginRun(const edm::Run  & r, const edm::EventSetup  &){
 	}
       }//end for modulesName
     }//end for nValidTriggers_
+
+
+    //check denominator
+    if( denominatorWild_.size() != 0 ) HLTPathDenomName_.push_back(denominatorWild_);
+    HLTriggerSelector denomSelect(inputTag_,HLTPathDenomName_);
+    HLTPathDenomName_.swap(denomSelect.theSelectTriggers);
+    //for (unsigned int i = 0; i < HLTPathDenomName_.size(); i++)
+    //  std::cout << "testing denom: " << HLTPathDenomName_[i] << std::endl;
+    if(HLTPathDenomName_.size()==1) denominator_ = HLTPathDenomName_[0];
+
   }//end if process
 
 
   if(dbe_){
-    if (directory_ != "" ) directory_ = directory_+"/" ;
+
+    if (directory_ != "" && directory_.substr(directory_.length()-1,1) != "/" ) directory_ = directory_+"/" ;
 
     int nbin = nValidTriggers_;
 
@@ -166,11 +179,12 @@ void HLTMonBitSummary::beginRun(const edm::Run  & r, const edm::EventSetup  &){
  
     dbe_->setCurrentFolder(directory_+"Summary");
 
-    h1_ = dbe_->book1D("PassingBits_Summary","PassingBits_Summary", nBin, min, max);
-    h2_ = dbe_->book2D("PassingBits_Correlation","PassingBits_Correlation",nBin,min,max, nBin,min,max);
-    pf_ = dbe_->book1D("Efficiency_Summary","Efficiency_Summary", nBin, min, max);
+    h1_ = dbe_->book1D("PassingBits_Summary_"+histLabel_,"PassingBits_Summary_"+histLabel_, nBin, min, max);
+    h2_ = dbe_->book2D("PassingBits_Correlation_"+histLabel_,"PassingBits_Correlation_"+histLabel_,nBin,min,max, nBin,min,max);
+    pf_ = dbe_->book1D("Efficiency_Summary_"+histLabel_,"Efficiency_Summary_"+histLabel_, nBin, min, max);
     if (denominator_!="")
-      ratio_ = dbe_->book1D(std::string("Ratio_"+denominator_),std::string("Ratio_"+denominator_),nBin,min,max);
+      //ratio_ = dbe_->book1D(std::string("Ratio_"+denominator_),std::string("Ratio_"+denominator_),nBin,min,max);
+      ratio_ = dbe_->book1D("HLTRate_"+histLabel_,"HLTRate_"+histLabel_,nBin,min,max);
     else 
       ratio_=0;
 
@@ -211,39 +225,49 @@ HLTMonBitSummary::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   
   unsigned int lastModule = 0;
 
-  //convert trigger names to trigger index properly
+  //cout << " Was at least one path run? " << trh->wasrun() << endl;;
+  //cout << " Has at least one path accepted the event? " << trh->accept() << endl;
+  //cout << " Has any path encountered an error? " << trh->error() << endl;
+  //cout << " Number of paths stored =  " << trh->size() << endl;
+
   for (unsigned int trig=0; trig < nValidTriggers_; trig++) {
+    //convert trigger names to trigger index properly  
     HLTPathsByIndex_[trig]=triggerNames_.triggerIndex(HLTPathsByName_[trig]);
-    lastModule = trh->index(HLTPathsByIndex_[trig]);
+
     //cout << "Trigger Name = " << HLTPathsByName_[trig] << ", HLTPathsByIndex_ = " << HLTPathsByIndex_[trig] << endl; 
     //cout << "Trigger Name = " << HLTPathsByName_[trig] << ", trh->index = " << lastModule << " " << trh->accept(HLTPathsByIndex_[trig]) << endl; 
-  
-    //go through the list of filters
-    for(unsigned int filt = 0; filt < triggerFilters_[trig].size()-1; filt++){
-      // 	cout << "triggerFilters_["<<trig<<"]["<<filt+1<<"] = " << triggerFilters_[trig][filt+1] 
-      // 	     << " , triggerFilterIndices = " << triggerFilterIndices_[trig][filt+1]
-      // 	     << " , lastModule = " << lastModule << endl;
-      
-      int binNumber = hSubFilterCount[trig]->getTH1F()->GetXaxis()->FindBin(triggerFilters_[trig][filt+1].c_str());      
-      
-      //check if filter passed
-      if(trh->accept(HLTPathsByIndex_[trig])){
-	hSubFilterCount[trig]->Fill(binNumber-1);//binNumber1 = 0 = first filter
-      }
-      //otherwise the module that issued the decision is the first fail
-      //so that all the ones before it passed
-      else if(triggerFilterIndices_[trig][filt+1] < lastModule){
-	hSubFilterCount[trig]->Fill(binNumber-1);
-      }
-      
-      //hSubFilterCount[trig]->Fill(-1);
-      
-      float eff = (float)hSubFilterCount[trig]->getBinContent(binNumber) / (float)total_ ;
-      float efferr = sqrt(eff*(1-eff)/ (float)total_);
-      hSubFilterEff[trig]->setBinContent(binNumber,eff);
-      hSubFilterEff[trig]->setBinError(binNumber,efferr);
 
-    }//filt
+    //check if trigger exists in TriggerResults
+    if (HLTPathsByIndex_[trig] < trh->size()) {
+      lastModule = trh->index(HLTPathsByIndex_[trig]);
+      
+      //go through the list of filters
+      for(unsigned int filt = 0; filt < triggerFilters_[trig].size()-1; filt++){
+	// 	cout << "triggerFilters_["<<trig<<"]["<<filt+1<<"] = " << triggerFilters_[trig][filt+1] 
+	// 	     << " , triggerFilterIndices = " << triggerFilterIndices_[trig][filt+1]
+	// 	     << " , lastModule = " << lastModule << endl;
+	
+	int binNumber = hSubFilterCount[trig]->getTH1F()->GetXaxis()->FindBin(triggerFilters_[trig][filt+1].c_str());      
+	
+	//check if filter passed
+	if(trh->accept(HLTPathsByIndex_[trig])){
+	  hSubFilterCount[trig]->Fill(binNumber-1);//binNumber1 = 0 = first filter
+	}
+	//otherwise the module that issued the decision is the first fail
+	//so that all the ones before it passed
+	else if(triggerFilterIndices_[trig][filt+1] < lastModule){
+	hSubFilterCount[trig]->Fill(binNumber-1);
+	}
+	
+	//hSubFilterCount[trig]->Fill(-1);
+	
+	float eff = (float)hSubFilterCount[trig]->getBinContent(binNumber) / (float)total_ ;
+	float efferr = sqrt(eff*(1-eff)/ (float)total_);
+	hSubFilterEff[trig]->setBinContent(binNumber,eff);
+	hSubFilterEff[trig]->setBinError(binNumber,efferr);
+
+      }//filt
+    }
   }
 
   //and check validity name (should not be necessary)
