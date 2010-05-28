@@ -30,8 +30,8 @@ hltMonJetMET = cms.EDAnalyzer("HLTMon",
            HLTCollectionLabels = cms.InputTag("hlt1jet30U","","HLT"),
            IsoCollections = cms.VInputTag(cms.InputTag("none")),
            theHLTOutputTypes = cms.uint32(95),
-     ),
+     )),
 disableROOToutput = cms.untracked.bool(True)
-   )
+
 
 )

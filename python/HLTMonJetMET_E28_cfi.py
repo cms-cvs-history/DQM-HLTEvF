@@ -223,12 +223,11 @@ hltMonJetMET = cms.EDAnalyzer("HLTMonJetMETDQMSource",
            IsoCollections = cms.VInputTag(cms.InputTag("none")),
            theHLTOutputTypes = cms.uint32(97),
            theSubDir = cms.string("MET"),
-      ),       
+      )),       
 
 
 
       disableROOToutput = cms.untracked.bool(True)
-   )
 
 )
 
