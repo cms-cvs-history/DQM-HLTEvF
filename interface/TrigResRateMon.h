@@ -16,7 +16,7 @@
 //        Vladimir Rekovic, July 2010
 //
 //
-// $Id: TrigResRateMon.h,v 1.7 2011/07/27 17:34:21 lwming Exp $
+// $Id: TrigResRateMon.h,v 1.9 2011/09/07 17:28:56 lwming Exp $
 //
 //
 
@@ -193,6 +193,9 @@ class TrigResRateMon : public edm::EDAnalyzer {
   MonitorElement * meAverageLumiPerLS;
 
   //Robin---
+  int64_t TotalDroppedCounts ;
+  MonitorElement * meDiagnostic;
+  MonitorElement * meCountsDroppedPerLS;
   MonitorElement * meCountsPassPerLS;
   MonitorElement * meCountsStreamPerLS;
   MonitorElement * meXsecStreamPerLS;
