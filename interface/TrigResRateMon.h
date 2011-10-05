@@ -16,7 +16,7 @@
 //        Vladimir Rekovic, July 2010
 //
 //
-// $Id: TrigResRateMon.h,v 1.7 2011/07/27 17:34:21 lwming Exp $
+// $Id: TrigResRateMon.h,v 1.10 2011/09/14 16:34:55 lwming Exp $
 //
 //
 
@@ -122,7 +122,7 @@ class TrigResRateMon : public edm::EDAnalyzer {
   void bookCountsPerPath();
   void printCountsPerPathThisLumi();
   void clearCountsPerPath();
-  void fillXsecPerDataset();
+  void fillXsecPerDataset(const int& lumi);
 
   void filltestHisto(const int& lumi); //Robin
   void bookTestHisto(); //Robin
@@ -186,6 +186,7 @@ class TrigResRateMon : public edm::EDAnalyzer {
 
 
   // JMS Keep track of rates and average lumi
+  std::vector<unsigned> rawCountsPerPD; //Robin 
   std::vector<unsigned> rawCountsPerPath; //Robin
   std::vector<unsigned> finalCountsPerPath;  //Robin
   double averageInstLumi;
@@ -193,6 +194,9 @@ class TrigResRateMon : public edm::EDAnalyzer {
   MonitorElement * meAverageLumiPerLS;
 
   //Robin---
+  int64_t TotalDroppedCounts ;
+  MonitorElement * meDiagnostic;
+  MonitorElement * meCountsDroppedPerLS;
   MonitorElement * meCountsPassPerLS;
   MonitorElement * meCountsStreamPerLS;
   MonitorElement * meXsecStreamPerLS;
@@ -341,7 +345,7 @@ class TrigResRateMon : public edm::EDAnalyzer {
     // name of monitor element that has xsec per path saved
     std::string scaledXsecPerPathME_Name;
 
-
+    std::string ratePerLSME_Name;
     // this tells you the name of the ME that has
     // raw counts (no prescale accounting)
     // for each path
@@ -422,19 +426,27 @@ class TrigResRateMon : public edm::EDAnalyzer {
           //std::cout << "Path " << thisPathName << " is masked, not filling it " << std::endl;
           continue;
         }
+	///////
+	TString thisName = thisPathName.c_str();
+	if ( thisName.Contains("L1") || thisName.Contains("L2") ){
+	  continue;
+	}
 
         double xsec = 1.0;
 	// what should we fill when averageLumi == 0 ???
         if (currentInstLumi > 0) {
           xsec = thisPathCounts / (currentInstLumi*secondsPerLS);
         } else if ( secondsPerLS > 0) {
-          xsec = thisPathCounts / secondsPerLS;
+	  xsec = (9e-10) ;
+	  //          xsec = thisPathCounts / secondsPerLS;
         } else {
-          xsec = thisPathCounts;
+	  xsec = (9e-20) ;
+	  //          xsec = thisPathCounts;
         }
 
+	myXsecPlot->Fill(iPath, xsec);
         //Robin ???
-	if (currentInstLumi > 0)  myXsecPlot->Fill(iPath, xsec);
+	//	if (currentInstLumi > 0)  myXsecPlot->Fill(iPath, xsec);
         //std::cout << datasetName << "  " << thisPathName << " filled with xsec  " << xsec << std::endl;
         
       }
