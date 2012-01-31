@@ -1,4 +1,4 @@
-// $Id: FourVectorHLTOnline.cc,v 1.35 2010/08/26 16:45:51 rekovic Exp $
+// $Id: FourVectorHLTOnline.cc,v 1.36 2011/03/29 13:51:44 rekovic Exp $
 // See header file for information. 
 #include "TMath.h"
 #include "DQM/HLTEvF/interface/FourVectorHLTOnline.h"
@@ -529,8 +529,10 @@ FourVectorHLTOnline::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
      // clear sets of matched objects
      mon->clearSets();
 
+     /* 
      int triggertype = 0;     
      triggertype = v->getObjectType();
+     */
 
      // monitor L1 (only if L1 passed and can find GTSeed)
      ////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-// $Id: TrigResRateMon.cc,v 1.11 2010/07/26 12:32:21 rekovic Exp $
+// $Id: TrigResRateMon.cc,v 1.12 2010/09/29 23:07:08 rekovic Exp $
 // See header file for information. 
 #include "TMath.h"
 #include "DQM/HLTEvF/interface/TrigResRateMon.h"
@@ -755,6 +755,7 @@ void TrigResRateMon::beginRun(const edm::Run& run, const edm::EventSetup& c)
       labelname = v->getPath() + "_wrt_" + v->getDenomPath();
       std::string histoname(labelname+"_NOn");
       std::string title(labelname+" N online");
+      /*
       double histEtaMax = 2.5;
 
       if (v->getObjectType() == trigger::TriggerMuon || v->getObjectType() == trigger::TriggerL1Mu) {
@@ -790,6 +791,7 @@ void TrigResRateMon::beginRun(const edm::Run& run, const edm::EventSetup& c)
       {
         histEtaMax = trackEtaMax_; 
       }
+      */
 
       TString pathfolder = dirname_ + TString("/FourVector/") + v->getPath();
       /*
