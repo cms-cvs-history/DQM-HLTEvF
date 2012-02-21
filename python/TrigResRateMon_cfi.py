@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-# $Id: TrigResRateMon_cfi.py,v 1.8 2011/07/27 17:34:21 lwming Exp $
+# $Id: TrigResRateMon_cfi.py,v 1.10 2011/09/21 16:51:09 lwming Exp $
 trRateMon = cms.EDAnalyzer("TrigResRateMon",
     dirname = cms.untracked.string("HLT/TrigResults/"),
     muonRecoCollectionName = cms.untracked.string("muons"),
@@ -58,7 +58,13 @@ trRateMon = cms.EDAnalyzer("TrigResRateMon",
      # HLT_Mu                            
      MaskedPaths = cms.vstring(
             'HLT_ZeroBias_v',
-            'HLT_Mu3_v'
+            'HLT_Mu5_v',
+            'HLT_Mu8_v',
+            'HLT_Mu12_v',
+            'HLT_Jet30_v',
+            'HLT_Jet60_v',
+            'HLT_DiJetAve30_v'
+            
       ),
 
   ## Robin
@@ -76,9 +82,9 @@ trRateMon = cms.EDAnalyzer("TrigResRateMon",
       ),                           
 
    # Will pick the first trigger whose name contains this substring
- #  ReferenceTrigger = cms.string('HLT_IsoMu30_eta2p1_v'),
-   ReferenceTrigger = cms.string('HLT_Mu17_Ele8_CaloIdL_v'),        
-
+ #  ReferenceTrigger = cms.string('HLT_Mu17_Ele8_CaloIdL_v'),        
+   ReferenceTrigger = cms.string('HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v'),
+                           
     paths = cms.VPSet(
              cms.PSet(
               pathname = cms.string("HLT_"),
