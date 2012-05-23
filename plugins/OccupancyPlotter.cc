@@ -13,7 +13,7 @@
 //
 // Original Author:  Jason Michael Slaunwhite,512 1-008,`+41227670494,
 //         Created:  Fri Aug  5 10:34:47 CEST 2011
-// $Id: OccupancyPlotter.cc,v 1.9 2011/12/19 16:18:33 abrinke1 Exp $
+// $Id: OccupancyPlotter.cc,v 1.17 2012/05/16 09:02:39 halil Exp $
 //
 //
 
@@ -25,11 +25,12 @@
 #include "DQMServices/Core/interface/MonitorElement.h"
 
 #include "DataFormats/Common/interface/TriggerResults.h"
-#include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
-#include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
+#include "DataFormats/Scalers/interface/DcsStatus.h"
+#include "DataFormats/Scalers/interface/LumiScalers.h"
+
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -74,7 +75,12 @@ class OccupancyPlotter : public edm::EDAnalyzer {
       virtual void setupHltMatrix(std::string, int);
   virtual void fillHltMatrix(std::string, std::string, double, double, bool);
 
-      // ----------member data ---------------------------
+  // a method to unpack the dcs info
+  bool checkDcsInfo (const edm::Event & jEvent);
+
+  void checkLumiInfo (const edm::Event & jEvent);
+
+  // ----------member data ---------------------------
 
 
   bool debugPrint;
@@ -87,7 +93,26 @@ class OccupancyPlotter : public edm::EDAnalyzer {
   HLTConfigProvider hltConfig_;
 
   vector< vector<string> > PDsVectorPathsVector;
-  
+
+  // Lumi info
+  float _instLumi;
+  float _instLumi_err;
+  float _pileup;
+  float _pileupRMS;
+  double _photScale;
+  // Store the HV info
+  bool dcs[25];
+  bool thisiLumiValue;
+
+  // counters
+  int cntevt;
+  int cntBadHV;
+
+  // histograms
+  TH1F * hist_LumivsLS;
+  TH1F * hist_PUvsLS;
+  TH1F * hist_PURMSvsLS;
+  TH1F * hist_photEtaNormd;
 };
 
 //
@@ -108,7 +133,10 @@ OccupancyPlotter::OccupancyPlotter(const edm::ParameterSet& iConfig)
 
   debugPrint = false;
   outputPrint = false;
-
+  thisiLumiValue = false;
+  cntevt=0;
+  cntBadHV=0;
+  _photScale=1.;
   if (debugPrint) std::cout << "Inside Constructor" << std::endl;
 
   plotDirectoryName = iConfig.getUntrackedParameter<std::string>("dirname", "HLT/Test");
@@ -138,8 +166,37 @@ OccupancyPlotter::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
 {
    using namespace edm;
    using std::string;
+   int lumisection = (int)iEvent.luminosityBlock();
 
-   if (debugPrint) std::cout << "Inside analyze" << std::endl;
+   //std::cout << "Inside analyze" << std::endl; //if (debugPrint) 
+   ++cntevt;
+   if (cntevt % 10000 == 0) std::cout << "[OccupancyPlotter::analyze] Received event " << cntevt << std::endl;
+   // === Check the HV and the lumi
+   bool highVoltageOK = checkDcsInfo ( iEvent );
+   if (!highVoltageOK) {
+      if (debugPrint) std::cout << "Skipping event: DCS problem\n";
+      ++cntBadHV;
+      return; 
+   } 
+   checkLumiInfo( iEvent);
+
+   if (debugPrint) std::cout << "instantaneous luminosity=" << _instLumi << " ± " << _instLumi_err << std::endl;
+
+   if (thisiLumiValue){
+     thisiLumiValue = false;
+     std::cout << "LS = " << lumisection << ", Lumi = " << _instLumi << " ± " << _instLumi_err << ", pileup = " << _pileup << ", PU RMS="<< _pileupRMS << std::endl;
+
+     hist_LumivsLS = dbe->get("HLT/OccupancyPlots/HLT_z_LumivsLS")->getTH1F();
+     hist_LumivsLS->SetBinContent(lumisection+1,_instLumi/1000);
+     hist_LumivsLS->SetBinError(lumisection+1,_instLumi_err/1000);
+     //
+     hist_PUvsLS = dbe->get("HLT/OccupancyPlots/HLT_z_PUvsLS")->getTH1F();
+     hist_PUvsLS->SetBinContent(lumisection+1,_pileup);
+
+     hist_PURMSvsLS = dbe->get("HLT/OccupancyPlots/HLT_z_PURMSvsLS")->getTH1F();
+     hist_PURMSvsLS->SetBinContent(lumisection+1,_pileupRMS);
+
+   }
 
     // Access Trigger Results
    edm::Handle<edm::TriggerResults> triggerResults;
@@ -307,6 +364,16 @@ OccupancyPlotter::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
 
     if (debugPrint) std::cout <<"Found PD: " << datasetNames[i]  << std::endl;     
     setupHltMatrix(datasetNames[i],i);   
+    int maxLumisection=1250;
+    dbe->setCurrentFolder("HLT/OccupancyPlots/");
+    hist_LumivsLS = new TH1F("HLT_z_LumivsLS", "; Lumisection; Instantaneous Luminosity [#times10^{33}cm^{-2} s^{-1}]",maxLumisection,0,maxLumisection);
+    dbe->book1D("HLT_z_LumivsLS", hist_LumivsLS);
+    hist_PUvsLS = new TH1F("HLT_z_PUvsLS", "; Lumisection; Pileup",maxLumisection,0,maxLumisection);
+    dbe->book1D("HLT_z_PUvsLS", hist_PUvsLS);
+    hist_PURMSvsLS = new TH1F("HLT_z_PURMSvsLS", "; Lumisection; Pileup RMS (spare)",maxLumisection,0,maxLumisection);
+    dbe->book1D("HLT_z_PURMSvsLS", hist_PURMSvsLS);
+    hist_photEtaNormd = new TH1F("HLT_photEtaNormd","Photons (overlayable for endcap); eta; Photons",60,-2.610,2.610);
+    dbe->book1D("HLT_photEtaNormd", hist_photEtaNormd);
 
   }// end of loop over dataset names
 
@@ -315,6 +382,7 @@ OccupancyPlotter::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
 // ------------ method called when ending the processing of a run  ------------
 void OccupancyPlotter::endRun(edm::Run const&, edm::EventSetup const&)
 {
+   std::cout << "[OccupancyPlotter::endRun] Total events received=" << cntevt << ", events with HV problem=" << cntBadHV << std::endl;
 }
 
 void OccupancyPlotter::setupHltMatrix(std::string label, int iPD) {
@@ -334,12 +402,12 @@ std::string PD_Folder;
 std::string Path_Folder;
 
 PD_Folder = TString("HLT/OccupancyPlots");
-if (label != "SingleMu" && label != "SingleElectron" && label != "Jet")  PD_Folder = TString("HLT/OccupancyPlots/"+label); 
+if (label != "SingleMu" && label != "SingleElectron" && label != "JetHT")  PD_Folder = TString("HLT/OccupancyPlots/"+label); 
 
 dbe->setCurrentFolder(PD_Folder.c_str());
 
 h_name = "HLT_"+label+"_EtaVsPhi";
-h_title = "HLT_"+label+"_EtaVsPhi";
+h_title = "HLT_"+label+"_EtaVsPhi; eta; phi";
 h_name_1dEta = "HLT_"+label+"_1dEta";
 h_name_1dPhi = "HLT_"+label+"_1dPhi";
 h_title_1dEta = label+" Occupancy Vs Eta";
@@ -366,9 +434,9 @@ Double_t PhiMaxFine = 33.0*TMath::Pi()/32.0;
  hist_1dEta->SetMinimum(0);
  hist_1dPhi->SetMinimum(0);
 
-MonitorElement * ME_EtaVsPhi = dbe->book2D(h_name.c_str(),hist_EtaVsPhi);
-MonitorElement * ME_1dEta = dbe->book1D(h_name_1dEta.c_str(),hist_1dEta);
-MonitorElement * ME_1dPhi = dbe->book1D(h_name_1dPhi.c_str(),hist_1dPhi);
+dbe->book2D(h_name.c_str(),hist_EtaVsPhi);
+dbe->book1D(h_name_1dEta.c_str(),hist_1dEta);
+dbe->book1D(h_name_1dPhi.c_str(),hist_1dPhi);
 
   for (unsigned int iPath = 0; iPath < PDsVectorPathsVector[iPD].size(); iPath++) { 
     pathName = PDsVectorPathsVector[iPD][iPath];
@@ -379,8 +447,8 @@ MonitorElement * ME_1dPhi = dbe->book1D(h_name_1dPhi.c_str(),hist_1dPhi);
     Path_Folder = TString("HLT/OccupancyPlots/"+label+"/Paths");
     dbe->setCurrentFolder(Path_Folder.c_str());
 
-    MonitorElement * ME_1dEta = dbe->book1D(h_name_1dEtaPath.c_str(),h_title_1dEtaPath.c_str(),numBinsEtaFine,-EtaMax,EtaMax);
-    MonitorElement * ME_1dPhi = dbe->book1D(h_name_1dPhiPath.c_str(),h_title_1dPhiPath.c_str(),numBinsPhiFine,-PhiMaxFine,PhiMaxFine);
+    dbe->book1D(h_name_1dEtaPath.c_str(),h_title_1dEtaPath.c_str(),numBinsEtaFine,-EtaMax,EtaMax);
+    dbe->book1D(h_name_1dPhiPath.c_str(),h_title_1dPhiPath.c_str(),numBinsPhiFine,-PhiMaxFine,PhiMaxFine);
   
     if (debugPrint) std::cout << "book1D for " << pathName << std::endl;
   }
@@ -398,11 +466,13 @@ void OccupancyPlotter::fillHltMatrix(std::string label, std::string path,double 
   std::string fullPathToME1dEtaPath;
   std::string fullPathToME1dPhiPath;
 
+  
+
  fullPathToME = "HLT/OccupancyPlots/HLT_"+label+"_EtaVsPhi"; 
  fullPathToME1dEta = "HLT/OccupancyPlots/HLT_"+label+"_1dEta";
  fullPathToME1dPhi = "HLT/OccupancyPlots/HLT_"+label+"_1dPhi";
 
-if (label != "SingleMu" && label != "SingleElectron" && label != "Jet") {
+if (label != "SingleMu" && label != "SingleElectron" && label != "JetHT") {
  fullPathToME = "HLT/OccupancyPlots/"+label+"/HLT_"+label+"_EtaVsPhi"; 
  fullPathToME1dEta = "HLT/OccupancyPlots/"+label+"/HLT_"+label+"_1dEta";
  fullPathToME1dPhi = "HLT/OccupancyPlots/"+label+"/HLT_"+label+"_1dPhi";
@@ -429,31 +499,160 @@ if (label != "SingleMu" && label != "SingleElectron" && label != "Jet") {
 
   if (debugPrint) std::cout << "TH2F *" << std::endl;
 
-  //int i=2;
-  //if (Eta>1.305 && Eta<1.872) i=0;
-  //if (Eta<-1.305 && Eta>-1.872) i=0;
-  //for (int ii=i; ii<3; ++ii) hist_2d->Fill(Eta,Phi); //Scales narrow bins in Barrel/Endcap border region
+  hist_photEtaNormd = dbe->get("HLT/OccupancyPlots/HLT_photEtaNormd")->getTH1F();
 
   if(first_count) {
-    hist_1dEta->Fill(Eta);
+   //std::cout << "eta=" << Eta << ", phi=" << Phi << ", label=" << label << ", path=" << path << "\n";
+    // this is the photon eta histogram normalized so as to make the barrel part integrate to a fixed value
+    // so that the plots can be overlayed on DQM GUI and the affect of the transparency correction that
+    // modifies the endcap photons can be observed.
+    // Normalization is done at the endrun  
+    if (Eta!=0 && label == "SinglePhoton") hist_photEtaNormd->Fill(Eta); 
+
+    if (Eta!=0) hist_1dEta->Fill(Eta);
     hist_1dPhi->Fill(Phi); 
-    hist_2d->Fill(Eta,Phi); }
-    hist_1dEtaPath->Fill(Eta); 
+    if (Eta!=0) hist_2d->Fill(Eta,Phi); }
+    if (Eta!=0) hist_1dEtaPath->Fill(Eta); 
     hist_1dPhiPath->Fill(Phi);
 
  if (debugPrint) std::cout << "hist->Fill" << std::endl;
 
 } //End fillHltMatrix
 
+//=========================================================
+
+bool OccupancyPlotter::checkDcsInfo (const edm::Event & jEvent) {
+
+  //Copy of code from DQMServices/Components/src/DQMDcsInfo.cc
+
+  edm::Handle<DcsStatusCollection> dcsStatus;
+  if ( ! jEvent.getByLabel("hltScalersRawToDigi", dcsStatus) )
+    {
+      std::cout  << "[OccupancyPlotter::checkDcsInfo] Could not get scalersRawToDigi by label\n" ;
+      for (int i=0;i<24;i++) dcs[i]=false;
+      return false;
+    }//if (debugPrint) 
+
+  if ( ! dcsStatus.isValid() ) 
+    {
+      std::cout  << "[OccupancyPlotter::checkDcsInfo] scalersRawToDigi not valid\n" ;
+      for (int i=0;i<24;i++) dcs[i]=false; // info not available: set to false
+      return false;
+    }
+  
+  // initialize all to "true"
+  for (int i=0; i<24; i++) dcs[i]=true;
+  
+  for (DcsStatusCollection::const_iterator dcsStatusItr = dcsStatus->begin(); 
+       dcsStatusItr != dcsStatus->end(); ++dcsStatusItr) 
+    {
+      
+      if (debugPrint) std::cout << (*dcsStatusItr) << std::endl;
+      
+      if (!dcsStatusItr->ready(DcsStatus::CSCp))   dcs[0]=false;
+      if (!dcsStatusItr->ready(DcsStatus::CSCm))   dcs[1]=false;   
+      if (!dcsStatusItr->ready(DcsStatus::DT0))    dcs[2]=false;
+      if (!dcsStatusItr->ready(DcsStatus::DTp))    dcs[3]=false;
+      if (!dcsStatusItr->ready(DcsStatus::DTm))    dcs[4]=false;
+      if (!dcsStatusItr->ready(DcsStatus::EBp))    dcs[5]=false;
+      if (!dcsStatusItr->ready(DcsStatus::EBm))    dcs[6]=false;
+      if (!dcsStatusItr->ready(DcsStatus::EEp))    dcs[7]=false;
+      if (!dcsStatusItr->ready(DcsStatus::EEm))    dcs[8]=false;
+      if (!dcsStatusItr->ready(DcsStatus::ESp))    dcs[9]=false;
+      if (!dcsStatusItr->ready(DcsStatus::ESm))    dcs[10]=false; 
+      if (!dcsStatusItr->ready(DcsStatus::HBHEa))  dcs[11]=false;
+      if (!dcsStatusItr->ready(DcsStatus::HBHEb))  dcs[12]=false;
+      if (!dcsStatusItr->ready(DcsStatus::HBHEc))  dcs[13]=false; 
+      if (!dcsStatusItr->ready(DcsStatus::HF))     dcs[14]=false;
+//      if (!dcsStatusItr->ready(DcsStatus::HO))     dcs[15]=false; // ignore HO
+      if (!dcsStatusItr->ready(DcsStatus::BPIX))   dcs[16]=false;
+      if (!dcsStatusItr->ready(DcsStatus::FPIX))   dcs[17]=false;
+      if (!dcsStatusItr->ready(DcsStatus::RPC))    dcs[18]=false;
+      if (!dcsStatusItr->ready(DcsStatus::TIBTID)) dcs[19]=false;
+      if (!dcsStatusItr->ready(DcsStatus::TOB))    dcs[20]=false;
+      if (!dcsStatusItr->ready(DcsStatus::TECp))   dcs[21]=false;
+      if (!dcsStatusItr->ready(DcsStatus::TECm))   dcs[22]=false;
+//      if (!dcsStatusItr->ready(DcsStatus::CASTOR)) dcs[23]=false;
+    }
+
+
+  // now we should add some logic that tests the HV status
+  bool decision = true;
+  for (int i=0; i<24; i++) decision=decision && dcs[i];
+  if (debugPrint) {
+     std::cout << "[OccupancyPlotter::checkDcsInfo] DCS Status:";
+     for (int i=0; i<24; i++) std::cout << dcs[i] << "-";
+     std::cout << "; Decision: " << decision << std::endl;
+  }
+  //std::cout << "; Decision: " << decision << std::endl;
+  return decision;
+  
+}
+
+void OccupancyPlotter::checkLumiInfo (const edm::Event & jEvent) {
+
+  if (debugPrint) std::cout << "Inside method check lumi info" << std::endl;
+  
+  edm::Handle<LumiScalersCollection> lumiScalers;
+  bool lumiHandleOK = jEvent.getByLabel(InputTag("hltScalersRawToDigi","",""), lumiScalers);
+
+  if (!lumiHandleOK || !lumiScalers.isValid()){
+    if (debugPrint) std::cout << "scalers not valid" << std::endl;
+    return;
+  }
+
+  if (lumiScalers->size() == 0) {
+    if (debugPrint) std::cout << "scalers has size < 0" << std::endl;
+    return;    
+  }
+
+  LumiScalersCollection::const_iterator it3 = lumiScalers->begin();
+  //unsigned int lumisection = it3->sectionNumber();
+
+  _instLumi = it3->instantLumi();
+  _instLumi_err = it3->instantLumiErr();
+  _pileup = it3->pileup();
+  _pileupRMS = it3->spare(); //it3->pileupRMS();
+
+  if (debugPrint) std::cout << "Instanteous Lumi is " << _instLumi << std::endl;
+  if (debugPrint) std::cout << "Instanteous Lumi Error is " << _instLumi_err << std::endl;
+  if (debugPrint) std::cout << "Lumi Fill is " <<it3->lumiFill() << std::endl;
+  if (debugPrint) std::cout << "Lumi Fill is " <<it3->lumiRun() << std::endl;
+  if (debugPrint) std::cout << "Live Lumi Fill is " <<it3->liveLumiFill() << std::endl;
+  if (debugPrint) std::cout << "Live Lumi Run is " <<it3->liveLumiRun() << std::endl;
+  if (debugPrint) std::cout << "Pileup = " << _pileup << std::endl;
+  if (debugPrint) std::cout << "Pileup RMS= " << _pileupRMS << std::endl;
+  return;
+  
+}
+
+//=========================================================
+
 // ------------ method called when starting to processes a luminosity block  ------------
-void OccupancyPlotter::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+void OccupancyPlotter::beginLuminosityBlock(edm::LuminosityBlock const &lb, edm::EventSetup const&)
 {
+ unsigned int thisLumiSection = 0;
+ thisLumiSection = lb.luminosityBlock();
+ std::cout << "[OccupancyPlotter::beginLuminosityBlock] New luminosity block: " << thisLumiSection << std::endl; 
+ thisiLumiValue=true; // add the instantaneous luminosity of the first event to the LS-Lumi plot
+
+ hist_photEtaNormd->Scale(1/_photScale); // revert to original normalization
+
 }
 
 // ------------ method called when ending the processing of a luminosity block  ------------
 void 
 OccupancyPlotter::endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
 {
+
+   hist_photEtaNormd = dbe->get("HLT/OccupancyPlots/HLT_photEtaNormd")->getTH1F();
+   double integral=hist_photEtaNormd->Integral(13,47); // for 60 bins, |eta|=1.479 corr.s to bins 13 and 47
+   if (integral >0) {
+      std::cout << "[endLuminosityBlock] Scaling HLT_photEtaNormd histogram to 1/" <<  integral << "\n" ;
+      _photScale=1/integral;
+      hist_photEtaNormd->Scale(_photScale);
+   }
+
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
